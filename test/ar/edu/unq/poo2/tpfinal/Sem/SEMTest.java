@@ -627,8 +627,8 @@ public class SEMTest {
 	@Test
 	public void testSuscribirEntidadYGetterDeEntidades() {
 		// Setup
-		EntidadObservadora unaEntidad = mock(EntidadGenerica.class);
-		EntidadObservadora otraEntidad = mock(EntidadGenerica.class);
+		EntidadObservadora unaEntidad = mock(EntidadObservadora.class);
+		EntidadObservadora otraEntidad = mock(EntidadObservadora.class);
 		
 		// Exercise
 		sem.suscribir(unaEntidad);
@@ -643,8 +643,8 @@ public class SEMTest {
 	@Test
 	public void testDesuscribirEntidad() {
 		// Setup
-		EntidadObservadora unaEntidad = mock(EntidadGenerica.class);
-		EntidadObservadora otraEntidad = mock(EntidadGenerica.class);
+		EntidadObservadora unaEntidad = mock(EntidadObservadora.class);
+		EntidadObservadora otraEntidad = mock(EntidadObservadora.class);
 		sem.suscribir(unaEntidad);
 		sem.suscribir(otraEntidad);
 		
@@ -661,8 +661,8 @@ public class SEMTest {
 	@Test
 	public void testNotificarEntidad() {
 		// Setup
-		EntidadObservadora unaEntidad = mock(EntidadGenerica.class);
-		EntidadObservadora otraEntidad = mock(EntidadGenerica.class);
+		EntidadObservadora unaEntidad = mock(EntidadObservadora.class);
+		EntidadObservadora otraEntidad = mock(EntidadObservadora.class);
 		sem.suscribir(unaEntidad);
 		sem.suscribir(otraEntidad);
 		
