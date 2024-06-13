@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
+	<classpathentry kind="lib" path="C:/Users/Hernan/Desktop/TAREA FACULTAD/2024/1er cuatrimestre/Programacion con Objetos II/mockito/byte-buddy-1.14.14.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Hernan/Desktop/TAREA FACULTAD/2024/1er cuatrimestre/Programacion con Objetos II/mockito/byte-buddy-agent-1.14.14.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Hernan/Desktop/TAREA FACULTAD/2024/1er cuatrimestre/Programacion con Objetos II/mockito/mockito-core-5.11.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Hernan/Desktop/TAREA FACULTAD/2024/1er cuatrimestre/Programacion con Objetos II/mockito/mockito-core-5.11.0-javadoc.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Hernan/Desktop/TAREA FACULTAD/2024/1er cuatrimestre/Programacion con Objetos II/mockito/mockito-core-5.11.0-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Hernan/Desktop/TAREA FACULTAD/2024/1er cuatrimestre/Programacion con Objetos II/mockito/objenesis-3.3.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
