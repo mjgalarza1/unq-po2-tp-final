@@ -674,5 +674,42 @@ public class SEMTest {
 		verify(otraEntidad, times(1)).update(sem24Horas);
 	}
 	
-	
+	@Test
+	public void testNotificacionesDeLosRegistrosDeInicio_DeFinalizacion_YDeComprasHaciaLasEntidades() {
+		// Setup
+		// (Instanciacion de un Registro que ocurre a las 13:00hs) 
+		LocalDate unaFechaInicio = LocalDate.now();
+		LocalTime unHorarioInicio = LocalTime.of(13, 00);
+		LocalDateTime unaHoraYFechaCustom = LocalDateTime.of(unaFechaInicio, unHorarioInicio);
+		when(unEstacionamientoApp.getFechaYHoraDeInicio()).thenReturn(unaHoraYFechaCustom);
+		// REGISTROS DE COMPRA
+		RegistroDeCompra unaCompraPuntual = mock(RegistroDeCompraPuntual.class);
+		RegistroDeCompra unRegistroDeRecarga = mock(RegistroDeRecarga.class);
+		// ENTIDADES OBSERVADORAS
+		EntidadObservadora unaEntidad = mock(EntidadObservadora.class);
+		EntidadObservadora otraEntidad = mock(EntidadObservadora.class);
+		sem24Horas.suscribir(unaEntidad);
+		sem24Horas.suscribir(otraEntidad);
+		// REGISTROS DE ESTACIONAMIENTO
+		sem24Horas.cargarCredito(100, unNumCel);
+		String patentePuntual = unEstacionamientoPuntual.getPatente();
+		String patenteApp = unEstacionamientoApp.getPatente();
+		
+		// Exercise
+		sem24Horas.registrarEstacionamiento(unEstacionamientoPuntual);
+		sem24Horas.registrarEstacionamiento(unEstacionamientoApp);
+		sem24Horas.finalizarEstacionamiento(patentePuntual);
+		sem24Horas.finalizarEstacionamiento(patenteApp);
+		sem24Horas.registrarCompra(unRegistroDeRecarga);
+		
+		// Verify
+		verify(unaEntidad, times(2)).update(unEstacionamientoPuntual); // Una vez por el registro, la segunda vez por su finalizacion.
+		verify(unaEntidad, times(2)).update(unEstacionamientoApp); // Una vez por el registro, la segunda vez por su finalizacion.
+		verify(unaEntidad, never()).update(unaCompraPuntual);
+		verify(unaEntidad, times(1)).update(unRegistroDeRecarga);
+		verify(otraEntidad, times(2)).update(unEstacionamientoPuntual); // Una vez por el registro, la segunda vez por su finalizacion.
+		verify(otraEntidad, times(2)).update(unEstacionamientoApp); // Una vez por el registro, la segunda vez por su finalizacion.
+		verify(otraEntidad, never()).update(unaCompraPuntual);
+		verify(otraEntidad, times(1)).update(unRegistroDeRecarga);
+	}
 }

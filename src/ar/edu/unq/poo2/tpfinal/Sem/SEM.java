@@ -134,6 +134,7 @@ public class SEM {
 		// Los registros de estacionamiento puntuales retornan notificaciones vacías (es decir, null).
 		agregarZonaDeEstacionamientoSiDebePara(unEstacionamiento);
 		registrosDeEstacionamiento.add(unEstacionamiento);
+		notificar(unEstacionamiento); // Notifica a las entidades observadoras que el estacionamiento fue registrado.
 		return null;
 	}
 	
@@ -155,6 +156,7 @@ public class SEM {
 		} else {
 			agregarZonaDeEstacionamientoSiDebePara(unEstacionamiento);
 			registrosDeEstacionamiento.add(unEstacionamiento);
+			notificar(unEstacionamiento); // Notifica a las entidades observadoras sobre el registro del estacionamiento.
 			notificacion = new NotificacionDeInicioExitoso(horaActual, this.getHoraMaximaPara(saldoDelCliente.doubleValue(), horaActual));
 		}
 		return notificacion;
@@ -235,6 +237,7 @@ public class SEM {
 		} else {
 			RegistroDeEstacionamiento estacionamientoModificado = estacionamiento.get();
 			estacionamientoModificado.setVigencia(false);
+			notificar(estacionamientoModificado); // Notifica a las entidades observadoras sobre la finalizacion del estacionamiento.
 			if (estacionamientoModificado.esDeApp()) {
 				RegistroDeEstacionamientoApp estacionamientoApp = (RegistroDeEstacionamientoApp) estacionamientoModificado;
 				cobrarleA(estacionamientoApp);
@@ -260,6 +263,9 @@ public class SEM {
 	
 	public void registrarCompra(RegistroDeCompra registro) {
 		registrosDeCompra.add(registro);
+		if (registro instanceof RegistroDeRecarga) {
+			notificar(registro); // Notifica a las entidades observadoras sobre el registro de recarga.
+		}
 	}
 	
 	public boolean esEstacionamientoVigente(String patente) {
