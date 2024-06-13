@@ -198,11 +198,11 @@ public class SEMTest {
 		sem.cargarCredito(otroCredito, otroNumCel);
 		
 		// Verify
-		assertTrue(sem.getCelularesConCredito().size() == 2);
+		assertEquals(sem.getCelularesConCredito().size(), 2);
 		assertTrue(sem.getCelularesConCredito().containsKey(unNumCel));
 		assertTrue(sem.getCelularesConCredito().containsKey(otroNumCel));
-		assertTrue(sem.getCelularesConCredito().get(unNumCel) == unCredito);
-		assertTrue(sem.getCelularesConCredito().get(otroNumCel) == otroCredito);
+		assertEquals(sem.getCelularesConCredito().get(unNumCel), unCredito);
+		assertEquals(sem.getCelularesConCredito().get(otroNumCel), otroCredito);
 	}	
 	
 	// ------------------- TEST SERVICIO ABIERTO o CERRADO -------------------
@@ -223,7 +223,7 @@ public class SEMTest {
 		assertTrue(sem24Horas.getRegistrosDeEstacionamiento().contains(unEstacionamientoPuntual));
 		verify(unEstacionamientoPuntual, times(1)).getPatente();
 		assertEquals(sem24Horas.getRegistrosDeEstacionamiento().get(0).getPatente(), unEstacionamientoPuntual.getPatente());
-		assertTrue(unaNotificacion == null);
+		assertEquals(unaNotificacion, null);
 		// Los registros de estacionamiento puntuales retornan notificaciones vacías (es decir, null).
 	}
 	
@@ -271,12 +271,12 @@ public class SEMTest {
 		assertTrue(sem24Horas.getRegistrosDeEstacionamiento().contains(unEstacionamientoPuntual));
 		verify(unEstacionamientoPuntual, atLeast(2)).getPatente();
 		// Una vez para el registro, y la segunda por la búsqueda de estacionamiento vigente.
-		assertTrue(sem24Horas.getRegistrosDeEstacionamiento().get(0).getPatente() == "Este es el original");
+		assertEquals(sem24Horas.getRegistrosDeEstacionamiento().get(0).getPatente(), "Este es el original");
 		assertFalse(sem24Horas.getRegistrosDeEstacionamiento().contains(elMismoEstacionamientoPuntual));
 		verify(elMismoEstacionamientoPuntual, times(1)).getPatente();
 		// Una única vez por la búsqueda de estacionamiento vigente.
 		
-		assertTrue(unaNotificacion == null);
+		assertEquals(unaNotificacion, null);
 		// Los registros de estacionamiento puntuales retornan notificaciones vacías (es decir, null).
 		assertTrue(otraNotificacion instanceof NotificacionMensajePersonalizado);
 		// Notificacion con el error dado (que el estacionamiento ya se encuentra vigente en el sistema).
@@ -357,7 +357,7 @@ public class SEMTest {
 		
 		// Verify
 		assertTrue(sem24Horas.getCelularesConCredito().containsKey(unNumCel));
-		assertTrue(sem24Horas.getCelularesConCredito().get(unNumCel) == 0);
+		assertEquals(sem24Horas.getCelularesConCredito().get(unNumCel), 0);
 		assertFalse(sem24Horas.getRegistrosDeEstacionamiento().contains(unEstacionamientoApp));
 		verify(unEstacionamientoApp, times(1)).getNumeroDeCelular();
 		verify(unEstacionamientoApp, times(1)).getPatente();
@@ -409,7 +409,7 @@ public class SEMTest {
 		// "registrarEstacionamientoPorApp", el cual usa "getNumeroDeCelular()"
 		verify(unEstacionamientoApp, times(1)).getPatente();
 		// Una única vez por la busqueda de estacionamiento vigente.
-		assertTrue(notificacionPuntual == null);
+		assertEquals(notificacionPuntual, null);
 		assertTrue(notificacionApp instanceof NotificacionMensajePersonalizado);
 		// Donde el mensaje indica que ya existe un estacionamiento vigente con esa patente.
 	}
@@ -438,6 +438,36 @@ public class SEMTest {
 		// "registrarEstacionamientoPorApp", el cual usa "getNumeroDeCelular()"
 		assertTrue(notificacionApp instanceof NotificacionDeInicioExitoso);
 		assertTrue(notificacionPuntual instanceof NotificacionMensajePersonalizado);
+		// Donde el mensaje indica que ya existe un estacionamiento vigente con esa patente.
+	}
+	
+	@Test
+	public void test_esEstacionamientoVigente() {
+		// Setup
+		when(unEstacionamientoPuntual.getVigencia()).thenReturn(true);
+		RegistroDeEstacionamientoPuntual elMismoEstacionamientoPuntual = mock(RegistroDeEstacionamientoPuntual.class);
+		when(elMismoEstacionamientoPuntual.getPatente()).thenReturn("MAX001");
+		when(elMismoEstacionamientoPuntual.getVigencia()).thenReturn(true);
+		when(elMismoEstacionamientoPuntual.esDeApp()).thenReturn(false);
+		when(elMismoEstacionamientoPuntual.getZonaDeEstacionamiento()).thenReturn(zonaB);
+		String patente = unEstacionamientoPuntual.getPatente();
+		sem24Horas.registrarEstacionamiento(unEstacionamientoPuntual);
+		sem24Horas.finalizarEstacionamiento(patente);
+		when(unEstacionamientoPuntual.getVigencia()).thenReturn(false);
+		sem24Horas.registrarEstacionamiento(unEstacionamientoPuntual);
+		
+		// Exercise
+		Notificacion notificacionPuntual = sem24Horas.registrarEstacionamiento(elMismoEstacionamientoPuntual);
+		
+		// Verify
+		assertTrue(sem24Horas.getRegistrosDeEstacionamiento().contains(unEstacionamientoPuntual));
+		assertTrue(sem24Horas.getRegistrosDeEstacionamiento().contains(elMismoEstacionamientoPuntual));
+		assertTrue(sem24Horas.esEstacionamientoVigente("MAX001"));
+		
+		verify(unEstacionamientoPuntual, times(10)).getPatente();
+		// Al ya existir el estacionamiento, "registrarEstacionamiento" nunca llega a delegar a
+		// "registrarEstacionamientoPorApp", el cual usa "getNumeroDeCelular()"
+		assertEquals(notificacionPuntual, null);
 		// Donde el mensaje indica que ya existe un estacionamiento vigente con esa patente.
 	}
 	
@@ -499,7 +529,7 @@ public class SEMTest {
 		Notificacion notificacionFin = semRelojCustom.finalizarEstacionamiento(patente);
 		
 		// Verify
-		assertTrue(semRelojCustom.getSaldoDe(unNumCel) == (montoOriginal - precioACobrar));
+		assertEquals(semRelojCustom.getSaldoDe(unNumCel), (montoOriginal - precioACobrar));
 		assertTrue(notificacionInicio instanceof NotificacionDeInicioExitoso);
 		assertTrue(notificacionFin instanceof NotificacionDeFin);
 	}
@@ -511,8 +541,7 @@ public class SEMTest {
 		
 		// Exercise
 		Notificacion notificacionFin = semRelojCustom.finalizarEstacionamiento(patente);
-		boolean elEstacionamientoExiste = semRelojCustom.getRegistrosDeEstacionamiento().stream()
-				.anyMatch(p -> p.getPatente() == patente);
+		boolean elEstacionamientoExiste = semRelojCustom.getRegistrosDeEstacionamiento().contains(unEstacionamientoApp);
 		
 		// Verify
 		assertFalse(elEstacionamientoExiste);
@@ -527,8 +556,7 @@ public class SEMTest {
 		
 		// Exercise
 		Notificacion notificacionFin = semCerrado.finalizarEstacionamiento(patente);
-		boolean elEstacionamientoExiste = semCerrado.getRegistrosDeEstacionamiento().stream()
-				.anyMatch(p -> p.getPatente() == patente);
+		boolean elEstacionamientoExiste = semCerrado.getRegistrosDeEstacionamiento().contains(unEstacionamientoApp);
 		
 		// Verify
 		assertFalse(elEstacionamientoExiste);
@@ -547,14 +575,13 @@ public class SEMTest {
 		// Exercise
 		Notificacion notificacionFin = semRelojCustom.finalizarEstacionamiento(patente);
 		when(unEstacionamientoPuntual.getVigencia()).thenReturn(false);
-		boolean elEstacionamientoExiste = semRelojCustom.getRegistrosDeEstacionamiento().stream()
-				.anyMatch(p -> p.getPatente() == patente && p.getVigencia());
+		boolean elEstacionamientoExiste = semCerrado.esEstacionamientoVigente(patente);
 		
 		// Verify
 		verify(unEstacionamientoPuntual, times(1)).setVigencia(false);
 		assertFalse(elEstacionamientoExiste);
-		assertTrue(notificacionInicio == null);
-		assertTrue(notificacionFin == null);
+		assertEquals(notificacionInicio, null);
+		assertEquals(notificacionFin, null);
 	}
 	
 	@Test
@@ -601,7 +628,7 @@ public class SEMTest {
 		sem.registrarCompra(unRegistroDeRecarga);
 		
 		// Verify
-		assertTrue(sem.getRegistrosDeCompra().size() == 2);
+		assertEquals(sem.getRegistrosDeCompra().size(), 2);
 		assertTrue(sem.getRegistrosDeCompra().contains(unaCompraPuntual));
 		assertTrue(sem.getRegistrosDeCompra().contains(unRegistroDeRecarga));
 	}
@@ -618,7 +645,7 @@ public class SEMTest {
 		sem.registrarInfraccion(otraInfraccion);
 		
 		// Verify
-		assertTrue(sem.getInfracciones().size() == 2);
+		assertEquals(sem.getInfracciones().size(), 2);
 		assertTrue(sem.getInfracciones().contains(unaInfraccion));
 		assertTrue(sem.getInfracciones().contains(otraInfraccion));
 	}
@@ -635,9 +662,23 @@ public class SEMTest {
 		sem.suscribir(otraEntidad);
 		
 		// Verify
-		assertTrue(sem.getEntidadesObservadoras().size() == 2);
+		assertEquals(sem.getEntidadesObservadoras().size(), 2);
 		assertTrue(sem.getEntidadesObservadoras().contains(unaEntidad));
 		assertTrue(sem.getEntidadesObservadoras().contains(otraEntidad));
+	}
+	
+	@Test
+	public void testDeSuscribirUnaEntidadQueYaExiste_estaNoSeGuarda() {
+		// Setup
+		EntidadObservadora unaEntidad = mock(EntidadObservadora.class);
+		
+		// Exercise
+		sem.suscribir(unaEntidad);
+		sem.suscribir(unaEntidad);
+		
+		// Verify
+		assertEquals(sem.getEntidadesObservadoras().size(), 1);
+		assertTrue(sem.getEntidadesObservadoras().contains(unaEntidad));
 	}
 	
 	@Test

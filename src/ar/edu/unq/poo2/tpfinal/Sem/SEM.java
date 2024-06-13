@@ -227,7 +227,7 @@ public class SEM {
 		boolean hayUnEstacionamientoVigente = esEstacionamientoVigente(patente);
 		Notificacion notificacion = null;
 		Optional<RegistroDeEstacionamiento> estacionamiento = registrosDeEstacionamiento.stream()
-				.filter(r -> r.getPatente() == patente && r.getVigencia())
+				.filter(r -> r.getPatente().equals(patente) && r.getVigencia())
 				.findFirst();
 		
 		if (!elServicioEstaAbierto()) {
@@ -271,7 +271,7 @@ public class SEM {
 	public boolean esEstacionamientoVigente(String patente) {
 		// Valida si ya se encuentra registrado algún estacionamiento vigente que tenga la patente dada.
 		boolean existeElEstacionamientoVigenteEnElSistema = registrosDeEstacionamiento.stream()
-				.anyMatch(r -> r.getPatente() == patente && r.getVigencia());
+				.anyMatch(r -> r.getPatente().equals(patente) && r.getVigencia());
 		return existeElEstacionamientoVigenteEnElSistema;
 	}
 	

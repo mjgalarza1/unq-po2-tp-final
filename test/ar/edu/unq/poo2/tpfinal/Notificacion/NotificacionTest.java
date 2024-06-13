@@ -41,4 +41,18 @@ public class NotificacionTest {
 		assertEquals(notificacionDeFin.getCostoDeEstacionamiento(), costoDeEstacionamiento);
 		assertEquals(notificacionDeFin.getMensaje(), "Su estacionamiento ha sido finalizado con éxito");
 	}
+	
+	@Test
+	public void testAlertaDeInicioYDeFin() {
+		AlertaDeInicio alertaDeInicio = new AlertaDeInicio();
+		AlertaDeFin alertaDeFin = new AlertaDeFin();
+		
+		String alertaInicioMsg = "AVISO: Su estacionamiento no fue registrado."
+				+"\nDebe registrar el estacionamiento.";
+		String alertaFinMsg = "AVISO: Su estacionamiento aún está vigente."
+				+"\nSi desea salir de la Zona de Estacionamiento, debe finalizar su estacionamiento.";
+		
+		assertEquals(alertaDeInicio.getMensaje(), alertaInicioMsg);
+		assertEquals(alertaDeFin.getMensaje(), alertaFinMsg);
+	}
 }
