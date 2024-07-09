@@ -5,10 +5,10 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import ar.edu.unq.poo2.tpfinal.EntidadObservadora.EntidadObservadora;
 import ar.edu.unq.poo2.tpfinal.Notificacion.*;
@@ -20,7 +20,7 @@ public class SEM {
 	private double precioPorHora;
 	private List<ZonaDeEstacionamiento> zonasDeEstacionamiento;
 	private List<RegistroDeCompra> registrosDeCompra;
-	private Map<Integer, Double> asociacionCelularCredito; // K = numCel | V = credito
+	private Set<Celular> celulares;
 	private List<RegistroDeEstacionamiento> registrosDeEstacionamiento;
 	private List<Infraccion> infracciones;
 	private List<EntidadObservadora> entidadesObservadoras;
@@ -34,7 +34,7 @@ public class SEM {
 		this.precioPorHora = 40.0;
 		this.zonasDeEstacionamiento = zonasDeEstacionamiento;
 		this.registrosDeCompra = new ArrayList<RegistroDeCompra>();
-		this.asociacionCelularCredito = new HashMap<Integer, Double>();
+		this.celulares = new HashSet<Celular>();
 		this.registrosDeEstacionamiento = new ArrayList<RegistroDeEstacionamiento>();
 		this.infracciones = new ArrayList<Infraccion>();
 		this.entidadesObservadoras = new ArrayList<EntidadObservadora>();
@@ -48,7 +48,7 @@ public class SEM {
 		this.precioPorHora = precioPorHora;
 		this.zonasDeEstacionamiento = zonasDeEstacionamiento;
 		this.registrosDeCompra = new ArrayList<RegistroDeCompra>();
-		this.asociacionCelularCredito = new HashMap<Integer, Double>();
+		this.celulares = new HashSet<Celular>();
 		this.registrosDeEstacionamiento = new ArrayList<RegistroDeEstacionamiento>();
 		this.infracciones = new ArrayList<Infraccion>();
 		this.entidadesObservadoras = new ArrayList<EntidadObservadora>();
@@ -62,7 +62,7 @@ public class SEM {
 		this.precioPorHora = precioPorHora;
 		this.zonasDeEstacionamiento = zonasDeEstacionamiento;
 		this.registrosDeCompra = new ArrayList<RegistroDeCompra>();
-		this.asociacionCelularCredito = new HashMap<Integer, Double>();
+		this.celulares = new HashSet<Celular>();
 		this.registrosDeEstacionamiento = new ArrayList<RegistroDeEstacionamiento>();
 		this.infracciones = new ArrayList<Infraccion>();
 		this.entidadesObservadoras = new ArrayList<EntidadObservadora>();
@@ -84,8 +84,8 @@ public class SEM {
 		return precioPorHora;
 	}
 	
-	public Map<Integer, Double> getCelularesConCredito() {
-		return asociacionCelularCredito;
+	public Set<Celular> getCelulares() {
+		return celulares;
 	}
 	
 	public List<ZonaDeEstacionamiento> getZonasDeEstacionamiento() {
@@ -145,19 +145,19 @@ public class SEM {
 		// retornando la notificación correspondiente.
 		Notificacion notificacion;
 		int numeroDeCelular = unEstacionamiento.getNumeroDeCelular(); 
-		boolean elCelularEstaRegistrado = asociacionCelularCredito.containsKey(numeroDeCelular);
-		Double saldoDelCliente = asociacionCelularCredito.get(numeroDeCelular);
+		Optional<Celular> celular = this.getCelularDeNumero(numeroDeCelular);
 		LocalTime horaActual = LocalTime.now(reloj);
 		
-		if (!elCelularEstaRegistrado) {
+		if (celular.isEmpty()) {
 			notificacion = new NotificacionMensajePersonalizado(this.mensajeDeNotificacionNumeroNoRegistrado(numeroDeCelular));
-		} else if (saldoDelCliente.doubleValue() <= 0) {
+		} else if (celular.get().getCredito() <= 0) {
 			notificacion = new NotificacionMensajePersonalizado(this.mensajeDeNotificacionSaldoInsuficiente());
 		} else {
+			double saldoDelCliente = celular.get().getCredito();
 			agregarZonaDeEstacionamientoSiDebePara(unEstacionamiento);
 			registrosDeEstacionamiento.add(unEstacionamiento);
 			notificar(unEstacionamiento); // Notifica a las entidades observadoras sobre el registro del estacionamiento.
-			notificacion = new NotificacionDeInicioExitoso(horaActual, this.getHoraMaximaPara(saldoDelCliente.doubleValue(), horaActual));
+			notificacion = new NotificacionDeInicioExitoso(horaActual, this.getHoraMaximaPara(saldoDelCliente, horaActual));
 		}
 		return notificacion;
 	}
@@ -195,23 +195,15 @@ public class SEM {
 	
 	private void cobrarleA(RegistroDeEstacionamientoApp unEstacionamiento) {
 		int numeroDeCelular = unEstacionamiento.getNumeroDeCelular();
-		double saldoOriginal = asociacionCelularCredito.get(numeroDeCelular);
+		Celular celular = getCelularDeNumero(numeroDeCelular).get();
 		double montoACobrar = this.precioACobrarPara(unEstacionamiento); 
-		double saldoModificado = saldoOriginal - montoACobrar;
-		asociacionCelularCredito.put(numeroDeCelular, saldoModificado);
+		celular.decrementarCredito(montoACobrar);
 	}
 	
 	public void cargarCredito(double montoACargar, int numeroDeCelular) {
-		// Registra el celular y su saldo SOLO si el numeroDeCelular dado
-		// NO se encuentra ya registrado en el sistema.
-		// De existir un registro, solo aumenta su saldo actual.
-		boolean elCelularEstaRegistrado = asociacionCelularCredito.containsKey(numeroDeCelular); 
-		if (!elCelularEstaRegistrado) {
-			asociacionCelularCredito.put(numeroDeCelular, montoACargar);
-		} else {
-			double saldoModificado = asociacionCelularCredito.get(numeroDeCelular) + montoACargar;
-			asociacionCelularCredito.put(numeroDeCelular, saldoModificado);
-		}
+		// Precondición: El celular del número dado debe estar registrado en el SEM.
+		Celular celular = this.getCelularDeNumero(numeroDeCelular).get();
+		celular.incrementarCredito(montoACargar);
 	}
 	
 	public Notificacion finalizarEstacionamiento(String patente) {
@@ -289,9 +281,22 @@ public class SEM {
 		entidadesObservadoras.forEach(e -> e.update(notificacion));
 	}
 	
+	public void registrarCliente(Celular unCelular) {
+		celulares.add(unCelular);
+	}
+	
+	protected Optional<Celular> getCelularDeNumero(int numCel) {
+		Optional<Celular> celular = celulares.stream()
+				.filter(c -> c.getNumCel() == numCel)
+				.findFirst();
+		return celular;
+	}
+	
 	public double getSaldoDe(int numeroDeCelular) throws Exception {
-		if (asociacionCelularCredito.containsKey(numeroDeCelular)) {
-			return asociacionCelularCredito.get(numeroDeCelular);
+		Optional<Celular> celular = this.getCelularDeNumero(numeroDeCelular);
+		if (celular.isPresent()) {
+			Celular celularActual = celular.get();
+			return celularActual.getCredito();
 		} else {
 			throw new Exception("El número de celular dado no se encuentra registrado en el sistema.");
 		}

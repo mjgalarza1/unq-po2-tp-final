@@ -35,6 +35,9 @@ public class SEMTest {
 	RegistroDeEstacionamientoPuntual unEstacionamientoPuntual;
 	
 	int unNumCel;
+	int otroNumCel;
+	Celular unCelular;
+	Celular otroCelular;
 	LocalTime horarioCustom;
 	LocalDate fechaCustom;
 	
@@ -59,6 +62,9 @@ public class SEMTest {
 		unEstacionamientoApp = mock(RegistroDeEstacionamientoApp.class);
 		unEstacionamientoPuntual = mock(RegistroDeEstacionamientoPuntual.class);
 		unNumCel = 1123456789;
+		otroNumCel = 1154981654;
+		unCelular = new Celular(unNumCel);
+		otroCelular = new Celular(otroNumCel);
 		
 		when(unEstacionamientoApp.getNumeroDeCelular()).thenReturn(unNumCel);
 		when(unEstacionamientoApp.getPatente()).thenReturn("MAX000");
@@ -140,45 +146,45 @@ public class SEMTest {
 	@Test
 	public void testCargaDeSaldoExistoso() {
 		// Setup
-		int unNumCel = 1187661111;
-		int otroNumCel = 1154981654;
 		double unCredito = 200.0;
 		double otroCredito = 500.0;
+		sem.registrarCliente(unCelular);
+		sem.registrarCliente(otroCelular);
 		
 		// Exercise
 		sem.cargarCredito(unCredito, unNumCel);
 		sem.cargarCredito(otroCredito, otroNumCel);
 		
 		// Verify
-		assertTrue(sem.getCelularesConCredito().containsKey(unNumCel));
-		assertTrue(sem.getCelularesConCredito().containsKey(otroNumCel));
-		assertEquals(sem.getCelularesConCredito().get(unNumCel), unCredito);
-		assertEquals(sem.getCelularesConCredito().get(otroNumCel), otroCredito);
+		assertTrue(sem.getCelulares().contains(unCelular));
+		assertTrue(sem.getCelulares().contains(otroCelular));
+		assertEquals(unCelular.getCredito(), unCredito);
+		assertEquals(otroCelular.getCredito(), otroCredito);
 	}
 	
 	@Test
 	public void test_deIntentarCargarUnCelularQueYaSeEncuentreGuardadoEnElSistema_seRegistraLaSumaEntreElMontoOriginalYElMontoACargar() {
 		// Setup
-		int unNumCel = 1187661111;
 		double montoOriginal = 200.0;
 		double montoACargar = 200.0;
+		sem.registrarCliente(unCelular);
 		sem.cargarCredito(montoOriginal, unNumCel);
 		
 		// Exercise
 		sem.cargarCredito(montoACargar, unNumCel);
 		
 		// Verify
-		assertTrue(sem.getCelularesConCredito().containsKey(unNumCel));
-		assertEquals(sem.getCelularesConCredito().get(unNumCel), (montoOriginal + montoACargar));
+		assertTrue(sem.getCelulares().contains(unCelular));
+		assertEquals(unCelular.getCredito(), (montoOriginal + montoACargar));
 	}
 	
 	@Test
 	public void testGetSaldoDe() throws Exception {
 		// Setup
-		int unNumCel = 1187661111;
-		int otroNumCel = 1154981654;
 		double unCredito = 200.0;
 		double otroCredito = 500.0;
+		sem.registrarCliente(unCelular);
+		sem.registrarCliente(otroCelular);
 		
 		// Exercise
 		sem.cargarCredito(unCredito, unNumCel);
@@ -201,21 +207,21 @@ public class SEMTest {
 	@Test
 	public void testGetCelularesConCredito() {
 		// Setup
-		int unNumCel = 1187661111;
-		int otroNumCel = 1154981654;
 		double unCredito = 200.0;
 		double otroCredito = 500.0;
+		sem.registrarCliente(unCelular);
+		sem.registrarCliente(otroCelular);
 		
 		// Exercise
 		sem.cargarCredito(unCredito, unNumCel);
 		sem.cargarCredito(otroCredito, otroNumCel);
 		
 		// Verify
-		assertEquals(sem.getCelularesConCredito().size(), 2);
-		assertTrue(sem.getCelularesConCredito().containsKey(unNumCel));
-		assertTrue(sem.getCelularesConCredito().containsKey(otroNumCel));
-		assertEquals(sem.getCelularesConCredito().get(unNumCel), unCredito);
-		assertEquals(sem.getCelularesConCredito().get(otroNumCel), otroCredito);
+		assertEquals(sem.getCelulares().size(), 2);
+		assertTrue(sem.getCelulares().contains(unCelular));
+		assertTrue(sem.getCelulares().contains(otroCelular));
+		assertEquals(unCelular.getCredito(), unCredito);
+		assertEquals(otroCelular.getCredito(), otroCredito);
 	}	
 	
 	// ------------------- TEST SERVICIO ABIERTO o CERRADO -------------------
@@ -242,6 +248,7 @@ public class SEMTest {
 	public void testGetRegistrosDeEstacionamiento() {
 		// Setup
 		double unMonto = 500.0;
+		sem24Horas.registrarCliente(unCelular);
 		sem24Horas.cargarCredito(unMonto, unNumCel);
 		when(unEstacionamientoPuntual.getPatente()).thenReturn("MAX007");
 		sem24Horas.registrarEstacionamiento(unEstacionamientoPuntual);
@@ -293,13 +300,14 @@ public class SEMTest {
 	public void testRegistroDeEstacionamientoPorAppExitoso() {
 		// Setup
 		double unMonto = 500.0;
+		sem24Horas.registrarCliente(unCelular);
 		sem24Horas.cargarCredito(unMonto, unNumCel);
 		
 		// Exercise
 		Notificacion unaNotificacion = sem24Horas.registrarEstacionamiento(unEstacionamientoApp);
 		
 		// Verify
-		assertTrue(sem24Horas.getCelularesConCredito().containsKey(unNumCel));
+		assertTrue(sem24Horas.getCelulares().contains(unCelular));
 		assertTrue(sem24Horas.getRegistrosDeEstacionamiento().contains(unEstacionamientoApp));
 		verify(unEstacionamientoApp, times(1)).getNumeroDeCelular();
 		verify(unEstacionamientoApp, times(1)).getPatente();
@@ -310,6 +318,7 @@ public class SEMTest {
 	public void test_deRegistrarUnEstacionamientoPorAppDeUnaPatenteQueYaSeEncuentreGuardadaEnElSistema_esteNoSeGuarda() {
 		// Setup
 		double unMonto = 500.0;
+		sem24Horas.registrarCliente(unCelular);
 		sem24Horas.cargarCredito(unMonto, unNumCel);
 		RegistroDeEstacionamientoApp elMismoEstacionamientoApp = mock(RegistroDeEstacionamientoApp.class);
 		when(elMismoEstacionamientoApp.getNumeroDeCelular()).thenReturn(unNumCel);
@@ -323,7 +332,7 @@ public class SEMTest {
 		Notificacion otraNotificacion = sem24Horas.registrarEstacionamiento(elMismoEstacionamientoApp);
 		
 		// Verify
-		assertTrue(sem24Horas.getCelularesConCredito().containsKey(unNumCel));
+		assertTrue(sem24Horas.getCelulares().contains(unCelular));
 		assertTrue(sem24Horas.getRegistrosDeEstacionamiento().contains(unEstacionamientoApp));
 		verify(unEstacionamientoApp, times(1)).getNumeroDeCelular();
 		verify(unEstacionamientoApp, times(2)).getPatente();
@@ -344,7 +353,7 @@ public class SEMTest {
 		Notificacion unaNotificacion = sem24Horas.registrarEstacionamiento(unEstacionamientoApp);
 		
 		// Verify
-		assertFalse(sem24Horas.getCelularesConCredito().containsKey(unNumCel));
+		assertFalse(sem24Horas.getCelulares().contains(unCelular));
 		assertFalse(sem24Horas.getRegistrosDeEstacionamiento().contains(unEstacionamientoApp));
 		verify(unEstacionamientoApp, times(1)).getNumeroDeCelular();
 		verify(unEstacionamientoApp, times(1)).getPatente();
@@ -356,14 +365,15 @@ public class SEMTest {
 	public void test_deRegistrarUnEstacionamientoPorAppDeUnNumeroDeCelularQueNoTieneSaldo_esteNoSeGuarda() {
 		// Setup
 		double unMonto = 0.0;
+		sem24Horas.registrarCliente(unCelular);
 		sem24Horas.cargarCredito(unMonto, unNumCel);
 		
 		// Exercise
 		Notificacion unaNotificacion = sem24Horas.registrarEstacionamiento(unEstacionamientoApp);
 		
 		// Verify
-		assertTrue(sem24Horas.getCelularesConCredito().containsKey(unNumCel));
-		assertEquals(sem24Horas.getCelularesConCredito().get(unNumCel), 0);
+		assertTrue(sem24Horas.getCelulares().contains(unCelular));
+		assertEquals(unCelular.getCredito(), 0);
 		assertFalse(sem24Horas.getRegistrosDeEstacionamiento().contains(unEstacionamientoApp));
 		verify(unEstacionamientoApp, times(1)).getNumeroDeCelular();
 		verify(unEstacionamientoApp, times(1)).getPatente();
@@ -375,13 +385,14 @@ public class SEMTest {
 	public void test_deIntentarRegistrarUnEstacionamientoPorAppFueraDelHorarioDeAtencion_esteNoSeGuarda() {
 		// Setup
 		double unMonto = 200.0;
+		semCerrado.registrarCliente(unCelular);
 		semCerrado.cargarCredito(unMonto, unNumCel);
 		
 		// Exercise
 		Notificacion unaNotificacion = semCerrado.registrarEstacionamiento(unEstacionamientoApp);
 		
 		// Verify
-		assertTrue(semCerrado.getCelularesConCredito().containsKey(unNumCel));
+		assertTrue(semCerrado.getCelulares().contains(unCelular));
 		assertFalse(semCerrado.getRegistrosDeEstacionamiento().contains(unEstacionamientoApp));
 		verify(unEstacionamientoApp, never()).getNumeroDeCelular();
 		// Al registrar mientras el servicio está cerrado, "registrarEstacionamiento" nunca llega a delegar a
@@ -397,6 +408,7 @@ public class SEMTest {
 	public void test_deRegistrarUnaPatentePorEstacionamientoPuntualEInmediatamenteIntentarRegistrarElMismoPorApp_esteNoSeGuarda() {
 		// Setup
 		double unMonto = 200.0;
+		sem24Horas.registrarCliente(unCelular);
 		sem24Horas.cargarCredito(unMonto, unNumCel);
 		sem24Horas.registrarEstacionamiento(unEstacionamientoPuntual);
 		when(unEstacionamientoApp.getPatente()).thenReturn("MAX001");
@@ -405,7 +417,7 @@ public class SEMTest {
 		Notificacion notificacionApp = sem24Horas.registrarEstacionamiento(unEstacionamientoApp);
 		
 		// Verify
-		assertTrue(sem24Horas.getCelularesConCredito().containsKey(unNumCel));
+		assertTrue(sem24Horas.getCelulares().contains(unCelular));
 		assertTrue(sem24Horas.getRegistrosDeEstacionamiento().contains(unEstacionamientoPuntual));
 		assertFalse(sem24Horas.getRegistrosDeEstacionamiento().contains(unEstacionamientoApp));
 		verify(unEstacionamientoPuntual, times(2)).getPatente();
@@ -423,6 +435,7 @@ public class SEMTest {
 	public void test_deRegistrarUnaPatentePorEstacionamientoPorAppEInmediatamenteIntentarRegistrarElMismoPuntual_esteNoSeGuarda() {
 		// Setup
 		double unMonto = 200.0;
+		sem24Horas.registrarCliente(unCelular);
 		sem24Horas.cargarCredito(unMonto, unNumCel);
 		Notificacion notificacionApp = sem24Horas.registrarEstacionamiento(unEstacionamientoApp);
 		
@@ -432,7 +445,7 @@ public class SEMTest {
 		sem24Horas.registrarEstacionamiento(unEstacionamientoPuntual);
 		
 		// Verify
-		assertTrue(sem24Horas.getCelularesConCredito().containsKey(unNumCel));
+		assertTrue(sem24Horas.getCelulares().contains(unCelular));
 		assertTrue(sem24Horas.getRegistrosDeEstacionamiento().contains(unEstacionamientoApp));
 		assertFalse(sem24Horas.getRegistrosDeEstacionamiento().contains(unEstacionamientoPuntual));
 		verify(unEstacionamientoApp, times(1)).getNumeroDeCelular();
@@ -479,6 +492,7 @@ public class SEMTest {
 		ZonaDeEstacionamiento zonaE = mock(ZonaDeEstacionamiento.class);
 		ZonaDeEstacionamiento zonaF = mock(ZonaDeEstacionamiento.class);
 		double unMonto = 200.0;
+		sem24Horas.registrarCliente(unCelular);
 		sem24Horas.cargarCredito(unMonto, unNumCel);
 		List<ZonaDeEstacionamiento> zonasDeEstacionamientoOriginal = sem24Horas.getZonasDeEstacionamiento();
 		when(unEstacionamientoApp.getZonaDeEstacionamiento()).thenReturn(zonaE);
@@ -523,6 +537,7 @@ public class SEMTest {
 		
 		double montoOriginal = 100.0;
 		double precioACobrar = semRelojCustom.precioACobrarPara(unEstacionamientoApp);
+		semRelojCustom.registrarCliente(unCelular);
 		semRelojCustom.cargarCredito(montoOriginal, unNumCel);
 		Notificacion notificacionInicio = semRelojCustom.registrarEstacionamiento(unEstacionamientoApp);
 		String patente = unEstacionamientoApp.getPatente();
@@ -596,6 +611,7 @@ public class SEMTest {
 		when(unEstacionamientoApp.getVigencia()).thenReturn(true);
 		when(unEstacionamientoPuntual.getPatente()).thenReturn("MAX001");
 		when(unEstacionamientoPuntual.getVigencia()).thenReturn(true);
+		semRelojCustom.registrarCliente(unCelular);
 		semRelojCustom.cargarCredito(100, unNumCel);
 		semRelojCustom.registrarEstacionamiento(unEstacionamientoPuntual);
 		semRelojCustom.registrarEstacionamiento(unEstacionamientoApp);
@@ -732,6 +748,7 @@ public class SEMTest {
 		sem24Horas.suscribir(unaEntidad);
 		sem24Horas.suscribir(otraEntidad);
 		// REGISTROS DE ESTACIONAMIENTO
+		sem24Horas.registrarCliente(unCelular);
 		sem24Horas.cargarCredito(100, unNumCel);
 		String patentePuntual = unEstacionamientoPuntual.getPatente();
 		String patenteApp = unEstacionamientoApp.getPatente();
