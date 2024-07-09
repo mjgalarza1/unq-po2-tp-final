@@ -10,24 +10,30 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import ar.edu.unq.poo2.tpfinal.Celular.Celular;
 import ar.edu.unq.poo2.tpfinal.EntidadObservadora.EntidadObservadora;
 import ar.edu.unq.poo2.tpfinal.Notificacion.*;
+import ar.edu.unq.poo2.tpfinal.RegistroDeCompra.RegistroDeCompra;
+import ar.edu.unq.poo2.tpfinal.RegistroDeCompra.RegistroDeRecarga;
+import ar.edu.unq.poo2.tpfinal.RegistroDeEstacionamiento.RegistroDeEstacionamiento;
+import ar.edu.unq.poo2.tpfinal.ZonaDeEstacionamiento.Infraccion;
+import ar.edu.unq.poo2.tpfinal.ZonaDeEstacionamiento.ZonaDeEstacionamiento;
 
 public class SEM {
 
 	private LocalTime horaApertura;
 	private LocalTime horaCierre;
 	private double precioPorHora;
-	private List<ZonaDeEstacionamiento> zonasDeEstacionamiento;
+	private Set<ZonaDeEstacionamiento> zonasDeEstacionamiento;
 	private List<RegistroDeCompra> registrosDeCompra;
 	private Set<Celular> celulares;
 	private List<RegistroDeEstacionamiento> registrosDeEstacionamiento;
 	private List<Infraccion> infracciones;
-	private List<EntidadObservadora> entidadesObservadoras;
+	private Set<EntidadObservadora> entidadesObservadoras;
 	private Clock reloj = Clock.system(ZoneId.systemDefault());
 	
 	// CONSTRUCTOR por DEFECTO (el SEM requiere de al menos una zona)
-	public SEM(List<ZonaDeEstacionamiento> zonasDeEstacionamiento) {
+	public SEM(Set<ZonaDeEstacionamiento> zonasDeEstacionamiento) {
 		super();
 		this.horaApertura = LocalTime.of(7,0);
 		this.horaCierre = LocalTime.of(20,0);
@@ -37,11 +43,11 @@ public class SEM {
 		this.celulares = new HashSet<Celular>();
 		this.registrosDeEstacionamiento = new ArrayList<RegistroDeEstacionamiento>();
 		this.infracciones = new ArrayList<Infraccion>();
-		this.entidadesObservadoras = new ArrayList<EntidadObservadora>();
+		this.entidadesObservadoras = new HashSet<EntidadObservadora>();
 	}
 	
 	// CONSTRUCTOR para setear los HORARIOS de apertura y cierre además del PRECIO
-	public SEM(LocalTime horaApertura, LocalTime horaCierre, double precioPorHora, List<ZonaDeEstacionamiento> zonasDeEstacionamiento) {
+	public SEM(LocalTime horaApertura, LocalTime horaCierre, double precioPorHora, Set<ZonaDeEstacionamiento> zonasDeEstacionamiento) {
 		super();
 		this.horaApertura = horaApertura;
 		this.horaCierre = horaCierre;
@@ -51,11 +57,11 @@ public class SEM {
 		this.celulares = new HashSet<Celular>();
 		this.registrosDeEstacionamiento = new ArrayList<RegistroDeEstacionamiento>();
 		this.infracciones = new ArrayList<Infraccion>();
-		this.entidadesObservadoras = new ArrayList<EntidadObservadora>();
+		this.entidadesObservadoras = new HashSet<EntidadObservadora>();
 	}
 		
 	// CONSTRUCTOR para setear los HORARIOS de apertura y cierre, el PRECIO, y un RELOJ para testear.
-	public SEM(LocalTime horaApertura, LocalTime horaCierre, double precioPorHora, List<ZonaDeEstacionamiento> zonasDeEstacionamiento, Clock reloj) {
+	public SEM(LocalTime horaApertura, LocalTime horaCierre, double precioPorHora, Set<ZonaDeEstacionamiento> zonasDeEstacionamiento, Clock reloj) {
 		super();
 		this.horaApertura = horaApertura;
 		this.horaCierre = horaCierre;
@@ -65,7 +71,7 @@ public class SEM {
 		this.celulares = new HashSet<Celular>();
 		this.registrosDeEstacionamiento = new ArrayList<RegistroDeEstacionamiento>();
 		this.infracciones = new ArrayList<Infraccion>();
-		this.entidadesObservadoras = new ArrayList<EntidadObservadora>();
+		this.entidadesObservadoras = new HashSet<EntidadObservadora>();
 		this.reloj = reloj;
 	}
 	
@@ -88,7 +94,7 @@ public class SEM {
 		return celulares;
 	}
 	
-	public List<ZonaDeEstacionamiento> getZonasDeEstacionamiento() {
+	public Set<ZonaDeEstacionamiento> getZonasDeEstacionamiento() {
 		return zonasDeEstacionamiento;
 	}
 	
@@ -104,7 +110,7 @@ public class SEM {
 		return infracciones;
 	}
 	
-	public List<EntidadObservadora> getEntidadesObservadoras() {
+	public Set<EntidadObservadora> getEntidadesObservadoras() {
 		return entidadesObservadoras;
 	}
 	
@@ -132,7 +138,7 @@ public class SEM {
 	private Notificacion registrarEstacionamientoPuntual(RegistroDeEstacionamientoPuntual unEstacionamiento) {
 		// Retorna una notificación, a pesar de que el Punto de Venta no hará nada con él.
 		// Los registros de estacionamiento puntuales retornan notificaciones vacías (es decir, null).
-		agregarZonaDeEstacionamientoSiDebePara(unEstacionamiento);
+		agregarZonaDeEstacionamiento(unEstacionamiento);
 		registrosDeEstacionamiento.add(unEstacionamiento);
 		notificar(unEstacionamiento); // Notifica a las entidades observadoras que el estacionamiento fue registrado.
 		return null;
@@ -154,7 +160,7 @@ public class SEM {
 			notificacion = new NotificacionMensajePersonalizado(this.mensajeDeNotificacionSaldoInsuficiente());
 		} else {
 			double saldoDelCliente = celular.get().getCredito();
-			agregarZonaDeEstacionamientoSiDebePara(unEstacionamiento);
+			agregarZonaDeEstacionamiento(unEstacionamiento);
 			registrosDeEstacionamiento.add(unEstacionamiento);
 			notificar(unEstacionamiento); // Notifica a las entidades observadoras sobre el registro del estacionamiento.
 			notificacion = new NotificacionDeInicioExitoso(horaActual, this.getHoraMaximaPara(saldoDelCliente, horaActual));
@@ -162,11 +168,9 @@ public class SEM {
 		return notificacion;
 	}
 	
-	private void agregarZonaDeEstacionamientoSiDebePara(RegistroDeEstacionamiento unEstacionamiento) {
+	private void agregarZonaDeEstacionamiento(RegistroDeEstacionamiento unEstacionamiento) {
 		ZonaDeEstacionamiento zonaDeEstacionamiento = unEstacionamiento.getZonaDeEstacionamiento();
-		if (!zonasDeEstacionamiento.contains(zonaDeEstacionamiento)) {
-			zonasDeEstacionamiento.add(zonaDeEstacionamiento);
-		}
+		zonasDeEstacionamiento.add(zonaDeEstacionamiento);
 	}
 	
 	protected boolean elServicioEstaAbierto() {
