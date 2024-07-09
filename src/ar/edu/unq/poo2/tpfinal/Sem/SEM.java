@@ -297,7 +297,7 @@ public class SEM {
 		}
 	}
 	
-	private String mensajeDeNotificacionServicioCerrado() {
+	protected String mensajeDeNotificacionServicioCerrado() {
 		return "Operacion denegada: El servicio solo está disponible entre las "
 				+this.horaApertura.toString()
 				+" y las "
@@ -305,20 +305,20 @@ public class SEM {
 				+".";
 	}
 	
-	private String mensajeDeNotificacionEstacionamientoYaVigente(String patente) {
+	protected String mensajeDeNotificacionEstacionamientoYaVigente(String patente) {
 		return "Operación denegada: El vehículo de patente "+patente+" ya se encuentra vigente en el sistema.";
 	}
 	
-	private String mensajeDeNotificacionEstacionamientoNoVigente(String patente) {
+	protected String mensajeDeNotificacionEstacionamientoNoVigente(String patente) {
 		return "Operación denegada: El vehículo de patente "+patente+" no se encuentra vigente en el sistema.";
 	}
 	
-	private String mensajeDeNotificacionNumeroNoRegistrado(int numeroDeCelular) {
+	protected String mensajeDeNotificacionNumeroNoRegistrado(int numeroDeCelular) {
 		return "Operación denegada: El número de teléfono "+numeroDeCelular+" no está registrado en el sistema."
 				+"\nDebe registrarlo y cargar crédito en algún Punto de Venta.";
 	}
 	
-	private String mensajeDeNotificacionSaldoInsuficiente() {
+	protected String mensajeDeNotificacionSaldoInsuficiente() {
 		return "Saldo insuficiente. Estacionamiento no permitido.";
 	}
 		
