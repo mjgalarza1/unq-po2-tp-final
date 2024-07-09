@@ -169,18 +169,14 @@ public class SEM {
 		}
 	}
 	
-	public boolean elServicioEstaAbierto() {
+	protected boolean elServicioEstaAbierto() {
 		// Valida si el servicio está activo dada la hora actual.
-		// (Primeramente era una clase privada, pero para poder testearla se tuvo que hacer pública,
-		// total, el método no modifica nada del sistema, solo retorna el resultado de realizar un cálculo).
 		LocalTime horaActual = LocalTime.now(reloj); 
 		return (horaActual.isAfter(this.horaApertura) && horaActual.isBefore(this.horaCierre));
 	}
  
-	public LocalTime getHoraMaximaPara(double monto, LocalTime horaActual) {
+	protected LocalTime getHoraMaximaPara(double monto, LocalTime horaActual) {
 		// Obtiene la hora máxima que el monto dado permita entre la hora actual dada y la hora de cierre.
-		// (Primeramente era una clase privada, pero para poder testearla se tuvo que hacer pública,
-		// total, el método no modifica nada del sistema, solo retorna el resultado de realizar un cálculo).
 		long horasDisponibles = (long) (monto / this.precioPorHora);
 		LocalTime tiempoLimite = horaActual.plusHours(horasDisponibles);
 		if (tiempoLimite.isAfter(this.horaCierre)) {
@@ -189,7 +185,7 @@ public class SEM {
 		return tiempoLimite;
 	}
 	
-	public double precioACobrarPara(RegistroDeEstacionamientoApp unEstacionamiento) {
+	protected double precioACobrarPara(RegistroDeEstacionamientoApp unEstacionamiento) {
 		LocalTime horaInicio = unEstacionamiento.getFechaYHoraDeInicio().toLocalTime();
 		LocalTime horaFin = LocalTime.now(reloj);
 		double cantHoras = horaInicio.until(horaFin, ChronoUnit.HOURS);
@@ -257,7 +253,7 @@ public class SEM {
 		return notificacion;
 	}
 	
-	public void finalizarTodosLosEstacionamientos() {
+	protected void finalizarTodosLosEstacionamientos() {
 		registrosDeEstacionamiento.forEach(r -> finalizarEstacionamiento(r.getPatente()));
 	}
 	
