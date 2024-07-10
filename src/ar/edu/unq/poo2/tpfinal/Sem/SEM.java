@@ -1,6 +1,7 @@
 package ar.edu.unq.poo2.tpfinal.Sem;
 
 import java.util.List;
+import java.util.Optional;
 
 import ar.edu.unq.poo2.tpfinal.Notificacion.Notificacion;
 import ar.edu.unq.poo2.tpfinal.Registro.RegistroDeEstacionamiento.RegistroDeEstacionamiento;
@@ -22,7 +23,10 @@ public class SEM {
 	}
 
 	public List<RegistroDeEstacionamiento> getRegistrosDeEstacionamiento() {
-		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public Optional<RegistroDeEstacionamiento> getEstacionamientoDePatente(String patente) {
+		return null; // getRegistrosDeEstacionamiento().stream().filter(e -> e.getPatente() == patente).findFirst();
 	}
 }

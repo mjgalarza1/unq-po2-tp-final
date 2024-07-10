@@ -7,31 +7,40 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import ar.edu.unq.poo2.tpfinal.EstadoDeMovimiento.*;
 import ar.edu.unq.poo2.tpfinal.Modo.*;
+import ar.edu.unq.poo2.tpfinal.Notificacion.*;
+import ar.edu.unq.poo2.tpfinal.Registro.RegistroDeEstacionamiento.RegistroDeEstacionamientoApp;
 import ar.edu.unq.poo2.tpfinal.Sem.SEM;
 import ar.edu.unq.poo2.tpfinal.ZonaDeEstacionamiento.ZonaDeEstacionamiento;
 
 class AppSemTEST {
-	IPantalla unaPantalla;
+	INotificable unNotificable;
 	GPS unGPS;
 	Modo unModoAutomatico;
-	ModoManual unModoManual;
+	Modo unModoManual;
+	EstadoDeMovimiento unEstadoManejando;
+	EstadoDeMovimiento unEstadoCaminando;
 	SEM unSem;
 	AppSem unaApp;
+	ZonaDeEstacionamiento unaZona;
 	
 	@BeforeEach
 	void setUp() throws Exception{
-		unaPantalla = mock(IPantalla.class);
+		unNotificable = mock(INotificable.class);
 		unGPS = mock(GPS.class);
 		unModoAutomatico = mock(ModoAutomatico.class);
 		unModoManual = mock(ModoManual.class);
+		unEstadoManejando = mock(EstadoManejando.class);
+		unEstadoCaminando = mock(EstadoCaminando.class);
 		unSem = mock(SEM.class);
-		unaApp = new AppSem(unaPantalla, "abc 123", 1166667777, true, true, unGPS, unModoAutomatico, unSem);
+		unaApp = new AppSem(unNotificable, "abc 123", 1166667777, true, unGPS, unEstadoCaminando, unModoAutomatico, unSem);
+		unaZona = mock(ZonaDeEstacionamiento.class);
 	}
 	
 	@Test
-	void getPantallaTEST() {
-		assertEquals(unaApp.getPantalla(), unaPantalla);
+	void getNotificableTEST() {
+		assertEquals(unaApp.getNotificable(), unNotificable);
 	}
 	
 	@Test
@@ -50,13 +59,25 @@ class AppSemTEST {
 	}
 	
 	@Test
+	void getGpsTEST() {
+		assertEquals(unaApp.getGps(), unGPS);
+	}
+
+	
+	@Test
 	void getModoTEST() {
 		assertEquals(unaApp.getModo(), unModoAutomatico);
 	}
 	
 	@Test
-	void getEstaManejandoTEST() {
-		assertEquals(unaApp.getEstaManejando(), true);
+	void getZonaActualTEST() {
+		when(unGPS.getZonaActual()).thenReturn(unaZona);
+		assertEquals(unaApp.getZonaActual(), unaZona);
+	}
+	
+	@Test
+	void getEstadoDeMovimientoTEST() {
+		assertEquals(unaApp.getEstadoDeMovimiento(), unEstadoCaminando);
 	}
 	
 	@Test
@@ -71,11 +92,10 @@ class AppSemTEST {
 	}
 	
 	@Test
-	void setEstaManejandoTEST() {
-		unaApp.setEstaManejando(false);
-		assertEquals(unaApp.getEstaManejando(), false);
-		unaApp.setEstaManejando(true);
-		assertEquals(unaApp.getEstaManejando(), true);
+	void setEstadoTEST() {
+		assertEquals(unaApp.getEstadoDeMovimiento(), unEstadoCaminando);
+		unaApp.setEstadoDeMovimiento(unEstadoManejando);
+		assertEquals(unaApp.getEstadoDeMovimiento(), unEstadoManejando);
 	}
 	
 	@Test
@@ -87,19 +107,109 @@ class AppSemTEST {
 	}
 	
 	@Test
-	void registrarVehiculoTEST() {
-		
+	void notificarTEST() {
+		Notificacion unaNotificacion = mock(Notificacion.class);
+		unaApp.notificar(unaNotificacion);
+		verify(unNotificable, times(1)).notificar(unaNotificacion);
+	}
+	
+	@Test
+	void registrarVehiculoTEST(){
+		//setup
 		ZonaDeEstacionamiento zonaA = mock(ZonaDeEstacionamiento.class);
-		unaApp.registrarVehiculo(zonaA);
-		verify(unaApp.getModo(),times(1))
-		.registrarVehiculo(unaApp.getPatente(), zonaA, unaApp.getSem(), unaApp.getNumCel(), unaApp.getPantalla());
+        Notificacion unaNotificacion = mock(Notificacion.class);
+        ArgumentCaptor<RegistroDeEstacionamientoApp> registroCaptor = ArgumentCaptor.forClass(RegistroDeEstacionamientoApp.class);
+		when(unSem.registrarEstacionamiento(registroCaptor.capture())).thenReturn(unaNotificacion);
+       
+		// exercise
+		Notificacion otraNotificacion = unaApp.registrarVehiculo(zonaA);
+		
+		// verify
+		assertEquals(unaNotificacion, otraNotificacion);
+		verify(unSem, times(1)).registrarEstacionamiento(registroCaptor.capture());
+		verify(unNotificable, times(1)).notificar(unaNotificacion);
 	}
 	
 	@Test
 	void finalizarEstacionamientoTEST() {
 		unaApp.finalizarEstacionamiento();
-		verify(unaApp.getModo(),times(1))
-		.finalizarEstacionamientoPara(unaApp.getPatente(), unaApp.getSem());
+		verify(unSem,times(1)).finalizarEstacionamiento(unaApp.getPatente());
+	}
+	
+	
+	@Test
+	void finalizarSiCorrespondeYNotificarTEST(){
+		// exercise
+		unaApp.finalizarSiCorrespondeYNotificar();
+		
+		// verify
+		verify(unModoAutomatico, times(1)).finalizarSiCorrespondeYNotificar("abc 123", unSem, unaApp);
+	}
+	
+	@Test
+	void registrarSiCorrespondeYNotificarTEST() {
+		// setup
+		when(unGPS.getZonaActual()).thenReturn(unaZona);
+		
+		// exercise
+		unaApp.registrarSiCorrespondeYNotificar();
+		
+		// verify
+		verify(unModoAutomatico, times(1)).registrarSiCorrespondeYNotificar("abc 123", unaZona, unSem, 1166667777, unaApp);
+	}
+	
+	
+	
+	@Test
+	void finalizarEstacionamientoConNotificacionExtraTEST() {
+		// setup
+		Notificacion unaNotificacionExtra = mock(Notificacion.class);
+		
+		// exercise
+		unaApp.finalizarEstacionamientoConNotificacionExtra(unaNotificacionExtra);
+		
+		// verify
+		verify(unSem,times(1)).finalizarEstacionamiento(unaApp.getPatente());
+		verify(unaApp.getNotificable(), times(1)).notificar(unaNotificacionExtra);
+	}
+	
+	
+	@Test
+	void registrarEstacionamientoConNotificacionExtra_CuandoNoSePuedeRegistrarTEST() {
+		//setup
+		ZonaDeEstacionamiento zonaA = mock(ZonaDeEstacionamiento.class); // dummy
+		Notificacion unaNotificacion = mock(Notificacion.class); // dummy
+		Notificacion unaNotificacionExtra = mock(Notificacion.class); // dummy
+		ArgumentCaptor<RegistroDeEstacionamientoApp> registroCaptor = ArgumentCaptor.forClass(RegistroDeEstacionamientoApp.class);
+		when(unSem.registrarEstacionamiento(registroCaptor.capture())).thenReturn(unaNotificacion);
+		when(unaNotificacion.esNotificacionDeInicioExitoso()).thenReturn(false);
+		       
+		// exercise
+		unaApp.registrarVehiculoConNotificacionExtra(unaZona, unaNotificacionExtra);
+				
+		// verify
+		verify(unSem, times(1)).registrarEstacionamiento(registroCaptor.capture());
+		verify(unaNotificacion, times(1)).esNotificacionDeInicioExitoso();
+		verify(unNotificable, never()).notificar(unaNotificacionExtra);
+	}
+	
+	@Test
+	void registrarEstacionamientoConNotificacionExtra_CuandoSePuedeRegistrarTEST() {
+		//setup
+		ZonaDeEstacionamiento zonaA = mock(ZonaDeEstacionamiento.class); // dummy
+		Notificacion unaNotificacion = mock(Notificacion.class); // dummy
+		Notificacion unaNotificacionExtra = mock(Notificacion.class); // dummy
+		ArgumentCaptor<RegistroDeEstacionamientoApp> registroCaptor = ArgumentCaptor.forClass(RegistroDeEstacionamientoApp.class);
+		when(unSem.registrarEstacionamiento(registroCaptor.capture())).thenReturn(unaNotificacion);
+		when(unaNotificacion.esNotificacionDeInicioExitoso()).thenReturn(true);
+		       
+		// exercise
+		unaApp.registrarVehiculoConNotificacionExtra(unaZona, unaNotificacionExtra);
+				
+		// verify
+		verify(unSem, times(1)).registrarEstacionamiento(registroCaptor.capture());
+		verify(unaNotificacion, times(1)).esNotificacionDeInicioExitoso();
+		verify(unNotificable, times(1)).notificar(unaNotificacionExtra);
 	}
 	
 	@Test
@@ -118,32 +228,13 @@ class AppSemTEST {
 	
 	@Test
 	void drivingTEST() {
-		boolean estabaManejando = unaApp.getEstaManejando();
 		unaApp.driving();
-		verify(unaApp.getModo(), times(1)).driving(estabaManejando, unaApp.getGps(), "abc 123", unSem);
-	}
-	
-	@Test
-	void drivingCuandoNoEstaActivadaLaDeteccionDeDesplazamientoNoHaceNadaTEST() {
-		boolean estabaManejando = unaApp.getEstaManejando();
-		unaApp.desactivarDeteccionDesplazamiento();
-		unaApp.driving();
-		verify(unaApp.getModo(), never()).driving(estabaManejando, unaApp.getGps(), "abc 123", unSem);
+		verify(unaApp.getEstadoDeMovimiento(), times(1)).driving(true, unaApp, unSem);
 	}
 	
 	@Test
 	void walkingTEST() {
-		boolean estabaManejando = unaApp.getEstaManejando();
 		unaApp.walking();
-		verify(unaApp.getModo(), times(1)).walking(estabaManejando, "abc 123", unSem);
+		verify(unaApp.getEstadoDeMovimiento(), times(1)).walking(true, unaApp, unSem);
 	}
-	
-	@Test
-	void walkingCuandoNoEstaActivadaLaDeteccionDeDesplazamientoNoHaceNadaTEST() {
-		boolean estabaManejando = unaApp.getEstaManejando();
-		unaApp.desactivarDeteccionDesplazamiento();
-		unaApp.walking();
-		verify(unaApp.getModo(), never()).walking(estabaManejando, "abc 123", unSem);
-	}
-	
 }

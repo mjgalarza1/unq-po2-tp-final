@@ -1,8 +1,11 @@
 package ar.edu.unq.poo2.tpfinal.AppSem;
 
+import java.time.LocalDateTime;
+
+import ar.edu.unq.poo2.tpfinal.EstadoDeMovimiento.EstadoDeMovimiento;
 import ar.edu.unq.poo2.tpfinal.Modo.Modo;
-import ar.edu.unq.poo2.tpfinal.Modo.ModoAutomatico;
-import ar.edu.unq.poo2.tpfinal.Modo.ModoManual;
+import ar.edu.unq.poo2.tpfinal.Notificacion.Notificacion;
+import ar.edu.unq.poo2.tpfinal.Registro.RegistroDeEstacionamiento.RegistroDeEstacionamientoApp;
 import ar.edu.unq.poo2.tpfinal.Sem.SEM;
 import ar.edu.unq.poo2.tpfinal.ZonaDeEstacionamiento.ZonaDeEstacionamiento;
 
@@ -11,22 +14,22 @@ public class AppSem {
 	private String patente;
 	private int numCel;
 	private boolean deteccionMovActiva;
-	private boolean estaManejando;
 	private GPS gps;
 	private Modo modo;
 	private SEM sem;
-	private IPantalla pantalla;
+	private INotificable notificable;
+	private EstadoDeMovimiento estadoDeMovimiento;
 	
-	public AppSem(IPantalla pantalla, String patente, int numCel,
-	boolean deteccionMovActiva, boolean estaManejando, GPS unGps, Modo unModo, SEM unSem) 
+	public AppSem(INotificable notificable, String patente, int numCel,
+	boolean deteccionMovActiva, GPS unGps, EstadoDeMovimiento unEstadoDeMovimiento, Modo unModo, SEM unSem) 
 	{
-		this.pantalla = pantalla;
+		this.notificable = notificable;
 		this.patente = patente;
 		this.gps = unGps;
 		this.modo = unModo;
+		this.estadoDeMovimiento = unEstadoDeMovimiento;
 		this.sem = unSem;
 		this.numCel = numCel;
-		this.estaManejando = estaManejando;
 		this.deteccionMovActiva = deteccionMovActiva;
 	}
 
@@ -54,33 +57,43 @@ public class AppSem {
 		return this.patente;
 	}
 	
-	public IPantalla getPantalla() {
-		return this.pantalla;
+	public INotificable getNotificable() {
+		return this.notificable;
 	}
 	
-	public boolean getEstaManejando() {
-		return this.estaManejando;
-	}
-
 	public boolean getDeteccionMovActiva() {
 		return this.deteccionMovActiva;
+	}
+	
+	protected EstadoDeMovimiento getEstadoDeMovimiento() {
+		return this.estadoDeMovimiento;
+	}
+	
+	public ZonaDeEstacionamiento getZonaActual() {
+		return this.getGps().getZonaActual();
 	}
 
 	public void setModo(Modo unModo) {
 		this.modo = unModo;
 	}
 	
-	public void setEstaManejando(boolean estaManejando) {
-		this.estaManejando = estaManejando;
+	public void setEstadoDeMovimiento(EstadoDeMovimiento unEstadoDeMovimiento) {
+		this.estadoDeMovimiento = unEstadoDeMovimiento;
 	}
 
-	public void registrarVehiculo(ZonaDeEstacionamiento unaZona) {
-		this.getModo().registrarVehiculo(this.getPatente(), unaZona, this.getSem(), this.getNumCel(), this.getPantalla());
-		
+	public Notificacion registrarVehiculo(ZonaDeEstacionamiento unaZona) {
+		RegistroDeEstacionamientoApp miEstacionamiento = new RegistroDeEstacionamientoApp(this.getPatente(), this.getNumCel(), LocalDateTime.now(), unaZona);
+		Notificacion unaNotificacion = this.getSem().registrarEstacionamiento(miEstacionamiento);
+		this.notificar(unaNotificacion);
+		return unaNotificacion;
+	}
+
+	public void notificar(Notificacion unaNotificacion) {
+		this.getNotificable().notificar(unaNotificacion);
 	}
 
 	public void finalizarEstacionamiento() {
-		this.getModo().finalizarEstacionamientoPara(this.getPatente(), this.getSem());
+		this.getSem().finalizarEstacionamiento(this.getPatente());
 	}
 
 	public void activarDeteccionDesplazamiento() {
@@ -91,19 +104,31 @@ public class AppSem {
 		this.deteccionMovActiva = false;
 	}
 
-
 	public void driving() {
-		if (this.getDeteccionMovActiva()) {
-			this.getModo().driving(this.getEstaManejando(), this.getGps(), patente, sem);
-			this.setEstaManejando(true);
-		}
+		this.getEstadoDeMovimiento().driving(this.getDeteccionMovActiva(), this, this.getSem());
 	}
 
 	public void walking() {
-		if (this.getDeteccionMovActiva()) {
-			this.getModo().walking(this.getEstaManejando(), patente, sem);
-			this.setEstaManejando(false);
+		this.getEstadoDeMovimiento().walking(this.getDeteccionMovActiva(), this, this.getSem());
+	}
+
+	public void finalizarSiCorrespondeYNotificar() {
+		this.getModo().finalizarSiCorrespondeYNotificar(this.getPatente(), this.getSem(), this);
+	}
+
+	public void registrarSiCorrespondeYNotificar() {
+		this.getModo().registrarSiCorrespondeYNotificar(this.getPatente(), this.getZonaActual(), this.getSem(), this.getNumCel(), this);
+	}
+
+	public void finalizarEstacionamientoConNotificacionExtra(Notificacion unaNotificacionExtra) {
+		this.finalizarEstacionamiento();
+		this.notificar(unaNotificacionExtra);
+	}
+
+	public void registrarVehiculoConNotificacionExtra(ZonaDeEstacionamiento unaZona, Notificacion unaNotificacionExtra) {
+		Notificacion unaNotificacion = this.registrarVehiculo(unaZona);
+		if (unaNotificacion.esNotificacionDeInicioExitoso()) {
+			this.notificar(unaNotificacionExtra);
 		}
 	}
-	
 }
