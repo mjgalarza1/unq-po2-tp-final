@@ -113,11 +113,11 @@ public class AppSem {
 	}
 
 	public void finalizarSiCorrespondeYNotificar() {
-		this.getModo().finalizarSiCorrespondeYNotificar(this.getPatente(), this.getSem(), this);
+		this.getModo().finalizarSiCorrespondeYNotificar(this);
 	}
 
 	public void registrarSiCorrespondeYNotificar() {
-		this.getModo().registrarSiCorrespondeYNotificar(this.getPatente(), this.getZonaActual(), this.getSem(), this.getNumCel(), this);
+		this.getModo().registrarSiCorrespondeYNotificar(this);
 	}
 
 	public void finalizarEstacionamientoConNotificacionExtra(Notificacion unaNotificacionExtra) {
@@ -125,8 +125,8 @@ public class AppSem {
 		this.notificar(unaNotificacionExtra);
 	}
 
-	public void registrarVehiculoConNotificacionExtra(ZonaDeEstacionamiento unaZona, Notificacion unaNotificacionExtra) {
-		Notificacion unaNotificacion = this.registrarVehiculo(unaZona);
+	public void registrarVehiculoConNotificacionExtra(Notificacion unaNotificacionExtra) {
+		Notificacion unaNotificacion = this.registrarVehiculo(this.getZonaActual());
 		if (unaNotificacion.esNotificacionDeInicioExitoso()) {
 			this.notificar(unaNotificacionExtra);
 		}

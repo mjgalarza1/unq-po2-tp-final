@@ -11,7 +11,7 @@ import ar.edu.unq.poo2.tpfinal.ZonaDeEstacionamiento.ZonaDeEstacionamiento;
 
 public interface Modo {
 
-	public abstract void finalizarSiCorrespondeYNotificar(String patente, SEM sem, AppSem app);
+	public abstract void finalizarSiCorrespondeYNotificar(AppSem app);
 
-	public abstract void registrarSiCorrespondeYNotificar(String patente, ZonaDeEstacionamiento zonaActual, SEM sem, int numCel, AppSem app);
+	public abstract void registrarSiCorrespondeYNotificar(AppSem app);
 }

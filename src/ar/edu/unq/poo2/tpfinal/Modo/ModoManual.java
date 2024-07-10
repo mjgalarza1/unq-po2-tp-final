@@ -17,12 +17,12 @@ import ar.edu.unq.poo2.tpfinal.ZonaDeEstacionamiento.ZonaDeEstacionamiento;
 public class ModoManual implements Modo{
 
 	@Override
-	public void finalizarSiCorrespondeYNotificar(String patente, SEM sem, AppSem app) {
+	public void finalizarSiCorrespondeYNotificar(AppSem app) {
 		app.notificar(new AlertaDeFin());
 	}
 	
 	@Override
-	public void registrarSiCorrespondeYNotificar(String patente, ZonaDeEstacionamiento zonaActual, SEM sem, int numCel, AppSem app) {
+	public void registrarSiCorrespondeYNotificar(AppSem app) {
 		app.notificar(new AlertaDeInicio());
 	}
 }

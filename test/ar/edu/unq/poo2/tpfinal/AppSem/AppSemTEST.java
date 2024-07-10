@@ -15,15 +15,15 @@ import ar.edu.unq.poo2.tpfinal.Sem.SEM;
 import ar.edu.unq.poo2.tpfinal.ZonaDeEstacionamiento.ZonaDeEstacionamiento;
 
 class AppSemTEST {
-	INotificable unNotificable;
-	GPS unGPS;
-	Modo unModoAutomatico;
-	Modo unModoManual;
-	EstadoDeMovimiento unEstadoManejando;
-	EstadoDeMovimiento unEstadoCaminando;
-	SEM unSem;
-	AppSem unaApp;
-	ZonaDeEstacionamiento unaZona;
+	private INotificable unNotificable;
+	private GPS unGPS;
+	private Modo unModoAutomatico;
+	private Modo unModoManual;
+	private EstadoDeMovimiento unEstadoManejando;
+	private EstadoDeMovimiento unEstadoCaminando;
+	private SEM unSem;
+	private AppSem unaApp;
+	private ZonaDeEstacionamiento unaZona;
 	
 	@BeforeEach
 	void setUp() throws Exception{
@@ -143,7 +143,7 @@ class AppSemTEST {
 		unaApp.finalizarSiCorrespondeYNotificar();
 		
 		// verify
-		verify(unModoAutomatico, times(1)).finalizarSiCorrespondeYNotificar("abc 123", unSem, unaApp);
+		verify(unModoAutomatico, times(1)).finalizarSiCorrespondeYNotificar(unaApp);
 	}
 	
 	@Test
@@ -155,7 +155,7 @@ class AppSemTEST {
 		unaApp.registrarSiCorrespondeYNotificar();
 		
 		// verify
-		verify(unModoAutomatico, times(1)).registrarSiCorrespondeYNotificar("abc 123", unaZona, unSem, 1166667777, unaApp);
+		verify(unModoAutomatico, times(1)).registrarSiCorrespondeYNotificar(unaApp);
 	}
 	
 	
@@ -185,7 +185,7 @@ class AppSemTEST {
 		when(unaNotificacion.esNotificacionDeInicioExitoso()).thenReturn(false);
 		       
 		// exercise
-		unaApp.registrarVehiculoConNotificacionExtra(unaZona, unaNotificacionExtra);
+		unaApp.registrarVehiculoConNotificacionExtra(unaNotificacionExtra);
 				
 		// verify
 		verify(unSem, times(1)).registrarEstacionamiento(registroCaptor.capture());
@@ -204,7 +204,7 @@ class AppSemTEST {
 		when(unaNotificacion.esNotificacionDeInicioExitoso()).thenReturn(true);
 		       
 		// exercise
-		unaApp.registrarVehiculoConNotificacionExtra(unaZona, unaNotificacionExtra);
+		unaApp.registrarVehiculoConNotificacionExtra(unaNotificacionExtra);
 				
 		// verify
 		verify(unSem, times(1)).registrarEstacionamiento(registroCaptor.capture());

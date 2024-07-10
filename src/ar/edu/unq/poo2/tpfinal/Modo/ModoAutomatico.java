@@ -16,13 +16,13 @@ import ar.edu.unq.poo2.tpfinal.ZonaDeEstacionamiento.ZonaDeEstacionamiento;
 
 public class ModoAutomatico implements Modo {
 	
-	public void finalizarSiCorrespondeYNotificar(String patente, SEM sem, AppSem app) {
+	public void finalizarSiCorrespondeYNotificar(AppSem app) {
 		Notificacion unaNotificacion = new NotificacionMensajePersonalizado("Se ha realizado el fin del estacionamiento de forma automática.");
 		app.finalizarEstacionamientoConNotificacionExtra(unaNotificacion);
 	}
 
-	public void registrarSiCorrespondeYNotificar(String patente, ZonaDeEstacionamiento zonaActual, SEM sem, int numCel, AppSem app) {
+	public void registrarSiCorrespondeYNotificar(AppSem app) {
 		Notificacion unaNotificacion = new NotificacionMensajePersonalizado("Se ha registrado el estacionamiento del vehiculo de forma automática.");
-		app.registrarVehiculoConNotificacionExtra(zonaActual, unaNotificacion);
+		app.registrarVehiculoConNotificacionExtra(unaNotificacion);
 	}
 }
