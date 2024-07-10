@@ -10,11 +10,13 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import ar.edu.unq.poo2.tpfinal.Celular.Celular;
 import ar.edu.unq.poo2.tpfinal.EntidadObservadora.*;
 import ar.edu.unq.poo2.tpfinal.Notificacion.*;
 
@@ -29,7 +31,7 @@ public class SEMTest {
 	ZonaDeEstacionamiento zonaA;
 	ZonaDeEstacionamiento zonaB;
 	ZonaDeEstacionamiento zonaC;
-	List<ZonaDeEstacionamiento> zonasDeEstacionamiento;
+	HashSet<ZonaDeEstacionamiento> zonasDeEstacionamiento;
 	
 	RegistroDeEstacionamientoApp unEstacionamientoApp;
 	RegistroDeEstacionamientoPuntual unEstacionamientoPuntual;
@@ -52,7 +54,7 @@ public class SEMTest {
 		zonaA = mock(ZonaDeEstacionamiento.class);
 		zonaB = mock(ZonaDeEstacionamiento.class);
 		zonaC = mock(ZonaDeEstacionamiento.class);
-		zonasDeEstacionamiento = new ArrayList<ZonaDeEstacionamiento>();
+		zonasDeEstacionamiento = new HashSet<ZonaDeEstacionamiento>();
 		zonasDeEstacionamiento.add(zonaA);
 		zonasDeEstacionamiento.add(zonaB);
 		zonasDeEstacionamiento.add(zonaC);
@@ -494,7 +496,7 @@ public class SEMTest {
 		double unMonto = 200.0;
 		sem24Horas.registrarCliente(unCelular);
 		sem24Horas.cargarCredito(unMonto, unNumCel);
-		List<ZonaDeEstacionamiento> zonasDeEstacionamientoOriginal = sem24Horas.getZonasDeEstacionamiento();
+		HashSet<ZonaDeEstacionamiento> zonasDeEstacionamientoOriginal = sem24Horas.getZonasDeEstacionamiento();
 		when(unEstacionamientoApp.getZonaDeEstacionamiento()).thenReturn(zonaE);
 		when(unEstacionamientoPuntual.getZonaDeEstacionamiento()).thenReturn(zonaF);
 		
