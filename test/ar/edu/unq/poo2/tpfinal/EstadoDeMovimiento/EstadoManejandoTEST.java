@@ -59,7 +59,6 @@ class EstadoManejandoTEST {
 		verify(unaApp,never()).registrarSiCorrespondeYNotificar();
 	}
 	
-	
 	@Test
 	void walking_CuandoEstaElEstacionamientoYNOSeEncuentraVigente_RegistraYSeteaElNuevoEstadoTEST() { // true - false
 		// setup
@@ -73,12 +72,8 @@ class EstadoManejandoTEST {
 		// verify
 		this.verificacionesInvariantes();
 		verify(unaApp,times(1)).registrarSiCorrespondeYNotificar();
-		
 	}
 	
-	
-	
-
 	@Test
 	void walking_CuandoNOEstaElEstacionamientoSeteaElNuevoEstadoTEST() { // false - any
 		// setup
