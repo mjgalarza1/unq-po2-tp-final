@@ -791,6 +791,4 @@ public class SEMTest {
 		// Verify
 		assertTrue(optionalEstacionamiento.isEmpty());
 	}
-	
-	
 }

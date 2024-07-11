@@ -12,6 +12,11 @@ public abstract class RegistroDeEstacionamiento {
 	protected ZonaDeEstacionamiento zonaDeEstacionamiento;
 	protected boolean vigencia;
 	
+	
+	protected RegistroDeEstacionamiento() {
+		this.vigencia = true;
+	}
+
 	public String getPatente() {
 		return this.patente;
 	}

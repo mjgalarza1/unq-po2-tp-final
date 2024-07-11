@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import ar.edu.unq.poo2.tpfinal.ZonaDeEstacionamiento.ZonaDeEstacionamiento;
@@ -11,15 +12,22 @@ import ar.edu.unq.poo2.tpfinal.ZonaDeEstacionamiento.ZonaDeEstacionamiento;
 import static org.mockito.Mockito.*;
 
 public class RegistroDeEstacionamientoAppTest {
+	
+	String patenteApp;
+	int numCel;
+	LocalDateTime unaFechaYHora;
+	ZonaDeEstacionamiento zonaA;
+	
+	@BeforeEach
+	public void setUp() {
+		patenteApp = "MAX000";
+		numCel = 1154876235;
+		unaFechaYHora = LocalDateTime.of(2024, 5, 5, 15, 00); // 5 de Mayo de 2024 a las 15:00hs
+		zonaA = mock(ZonaDeEstacionamiento.class);
+	}
 
 	@Test
 	public void testConstructoresYGettersDeRegistroDeEstacionamientoApp() {
-		// Setup
-		String patenteApp = "MAX000";
-		int numCel = 1154876235;
-		LocalDateTime unaFechaYHora = LocalDateTime.of(2024, 5, 5, 15, 00); // 5 de Mayo de 2024 a las 15:00hs
-		ZonaDeEstacionamiento zonaA = mock(ZonaDeEstacionamiento.class);
-		
 		// Exercise
 		RegistroDeEstacionamientoApp regApp = new RegistroDeEstacionamientoApp(patenteApp, numCel, unaFechaYHora, zonaA);
 		
@@ -28,5 +36,19 @@ public class RegistroDeEstacionamientoAppTest {
 		assertEquals(regApp.getNumeroDeCelular(), numCel);
 		assertEquals(regApp.getFechaYHoraDeInicio(), unaFechaYHora);
 		assertEquals(regApp.getZonaDeEstacionamiento(), zonaA);
+		assertTrue(regApp.getVigencia());
+		assertTrue(regApp.esDeApp());
+	}
+	
+	@Test
+	public void testSetVigencia() {
+		// Setup
+		RegistroDeEstacionamientoApp regApp = new RegistroDeEstacionamientoApp(patenteApp, numCel, unaFechaYHora, zonaA);
+		
+		// Exercise
+		regApp.setVigencia(false);
+
+		// Verify
+		assertFalse(regApp.getVigencia());
 	}
 }

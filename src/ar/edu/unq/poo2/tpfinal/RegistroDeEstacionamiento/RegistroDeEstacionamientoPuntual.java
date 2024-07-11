@@ -13,7 +13,6 @@ public class RegistroDeEstacionamientoPuntual extends RegistroDeEstacionamiento{
 		this.horasEstacionamiento = horasEstacionamiento;
 		this.fechaYHoraDeInicio = fechaYHoraDeInicio;
 		this.zonaDeEstacionamiento = zonaDeEstacionamiento;
-		this.vigencia = true;
 	}
 	
 	public int getHorasEstacionamiento() {

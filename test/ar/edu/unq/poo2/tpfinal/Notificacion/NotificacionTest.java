@@ -7,7 +7,7 @@ import java.time.LocalTime;
 import org.junit.jupiter.api.Test;
 
 public class NotificacionTest {
-
+	
 	@Test
 	public void testNotificacionDeInicioExitoso() {
 		LocalTime horaInicio = LocalTime.of(7, 0);
@@ -17,6 +17,7 @@ public class NotificacionTest {
 		assertEquals(notificacionDeInicio.getHoraInicio(), horaInicio);
 		assertEquals(notificacionDeInicio.getHoraMaxima(), horaMaxima);
 		assertEquals(notificacionDeInicio.getMensaje(), "Su estacionamiento ha sido registrado con éxito");
+		assertTrue(notificacionDeInicio.esNotificacionDeInicioExitoso());
 	}
 	
 	@Test
@@ -25,6 +26,7 @@ public class NotificacionTest {
 		NotificacionMensajePersonalizado notificacionPersonalizada = new NotificacionMensajePersonalizado(unMensajePersonalizado);
 		
 		assertEquals(notificacionPersonalizada.getMensaje(), unMensajePersonalizado);
+		assertFalse(notificacionPersonalizada.esNotificacionDeInicioExitoso());
 	}
 	
 	@Test
@@ -40,6 +42,7 @@ public class NotificacionTest {
 		assertEquals(notificacionDeFin.getCantHoras(), cantHoras);
 		assertEquals(notificacionDeFin.getCostoDeEstacionamiento(), costoDeEstacionamiento);
 		assertEquals(notificacionDeFin.getMensaje(), "Su estacionamiento ha sido finalizado con éxito");
+		assertFalse(notificacionDeFin.esNotificacionDeInicioExitoso());
 	}
 	
 	@Test
@@ -54,5 +57,7 @@ public class NotificacionTest {
 		
 		assertEquals(alertaDeInicio.getMensaje(), alertaInicioMsg);
 		assertEquals(alertaDeFin.getMensaje(), alertaFinMsg);
+		assertFalse(alertaDeInicio.esNotificacionDeInicioExitoso());
+		assertFalse(alertaDeFin.esNotificacionDeInicioExitoso());
 	}
 }
