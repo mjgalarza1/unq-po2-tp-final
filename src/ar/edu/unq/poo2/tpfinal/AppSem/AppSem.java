@@ -105,11 +105,16 @@ public class AppSem {
 	}
 
 	public void driving() {
-		this.getEstadoDeMovimiento().driving(this.getDeteccionMovActiva(), this, this.getSem());
+		if(this.getDeteccionMovActiva()) {
+			this.getEstadoDeMovimiento().driving(this, this.getSem());
+		}
+		
 	}
 
 	public void walking() {
-		this.getEstadoDeMovimiento().walking(this.getDeteccionMovActiva(), this, this.getSem());
+		if(this.getDeteccionMovActiva()) {
+			this.getEstadoDeMovimiento().walking(this, this.getSem());
+		}
 	}
 
 	public void finalizarSiCorrespondeYNotificar() {

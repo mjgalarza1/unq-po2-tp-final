@@ -227,14 +227,30 @@ class AppSemTEST {
 	}
 	
 	@Test
-	void drivingTEST() {
+	void driving_ConDeteccionDeMovimientoActivaTEST() {
+		unaApp.activarDeteccionDesplazamiento();
 		unaApp.driving();
-		verify(unaApp.getEstadoDeMovimiento(), times(1)).driving(true, unaApp, unSem);
+		verify(unaApp.getEstadoDeMovimiento(), times(1)).driving(unaApp, unSem);
 	}
 	
 	@Test
-	void walkingTEST() {
+	void driving_ConDeteccionDeMovimientoDesactivadaTEST() {
+		unaApp.desactivarDeteccionDesplazamiento();
+		unaApp.driving();
+		verify(unaApp.getEstadoDeMovimiento(), never()).driving(unaApp, unSem);
+	}
+	
+	@Test
+	void walking_ConDeteccionDeMovimientoActivaTEST() {
+		unaApp.activarDeteccionDesplazamiento();
 		unaApp.walking();
-		verify(unaApp.getEstadoDeMovimiento(), times(1)).walking(true, unaApp, unSem);
+		verify(unaApp.getEstadoDeMovimiento(), times(1)).walking(unaApp, unSem);
+	}
+	
+	@Test
+	void walking_ConDeteccionDeMovimientoDesactivadaTEST() {
+		unaApp.desactivarDeteccionDesplazamiento();
+		unaApp.walking();
+		verify(unaApp.getEstadoDeMovimiento(), never()).walking(unaApp, unSem);
 	}
 }
