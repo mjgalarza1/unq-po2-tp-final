@@ -133,21 +133,22 @@ public class SEM {
 	public void registrarEstacionamientoPuntual(RegistroDeEstacionamientoPuntual unEstacionamiento) {
 		// Retorna una notificación, a pesar de que el Punto de Venta no hará nada con él.
 		// Los registros de estacionamiento puntuales retornan notificaciones vacías (es decir, null).
-		this.getEstado().registrarEstacionamientoPuntual(unEstacionamiento, this);
+		this.estado.registrarEstacionamientoPuntual(unEstacionamiento, this);
 	}
 
 	public Notificacion registrarEstacionamientoPorApp(RegistroDeEstacionamientoApp unEstacionamiento) {
-		return this.getEstado().registrarEstacionamientoPorApp(unEstacionamiento, this);
+		return estado.registrarEstacionamientoPorApp(unEstacionamiento, this);
 	}
-	
-	//
 	
 	protected void registrarEstacionamientoPuntualEstandoAbierto(RegistroDeEstacionamientoPuntual unEstacionamiento) {
-		this.agregarZonaDeEstacionamiento(unEstacionamiento);
-		this.agregarARegistrosDeEstacionamiento(unEstacionamiento);
-		this.notificar(unEstacionamiento); // Notifica a las entidades observadoras que el estacionamiento fue registrado.
+		String patente = unEstacionamiento.getPatente();
+		boolean yaHayUnEstacionamientoVigente = esEstacionamientoVigente(patente);
+		if (!yaHayUnEstacionamientoVigente) {
+			this.agregarZonaDeEstacionamiento(unEstacionamiento);
+			this.agregarARegistrosDeEstacionamiento(unEstacionamiento);
+			this.notificar(unEstacionamiento); // Notifica a las entidades observadoras que el estacionamiento fue registrado.
+		}
 	}
-	
 	
 	protected Notificacion registrarEstacionamientoPorAppEstandoAbierto(RegistroDeEstacionamientoApp unEstacionamiento) {
 		// Guarda el registro del estacionamiento en el sistema
@@ -155,14 +156,18 @@ public class SEM {
 		// si la patente del estacionamiento dado NO se encuentra ya vigente en el sistema,
 		// retornando la notificación correspondiente.
 		Notificacion notificacion;
-		int numeroDeCelular = unEstacionamiento.getNumeroDeCelular(); 
+		int numeroDeCelular = unEstacionamiento.getNumeroDeCelular();
 		Optional<Celular> celular = this.getCelularDeNumero(numeroDeCelular);
 		LocalTime horaActual = LocalTime.now(reloj);
+		String patente = unEstacionamiento.getPatente();
+		boolean yaHayUnEstacionamientoVigente = esEstacionamientoVigente(patente);
 				
 		if (celular.isEmpty()) {
 			notificacion = new NotificacionMensajePersonalizado(this.mensajeDeNotificacionNumeroNoRegistrado(numeroDeCelular));
 		} else if (celular.get().getCredito() <= 0) {
 			notificacion = new NotificacionMensajePersonalizado(this.mensajeDeNotificacionSaldoInsuficiente());
+		} else if (yaHayUnEstacionamientoVigente) {
+			notificacion = new NotificacionMensajePersonalizado(this.mensajeDeNotificacionEstacionamientoYaVigente(patente));
 		} else {
 			double saldoDelCliente = celular.get().getCredito();
 			this.agregarZonaDeEstacionamiento(unEstacionamiento);
@@ -175,7 +180,7 @@ public class SEM {
 	 
 
 	public Notificacion finalizarEstacionamiento(String patente) {
-		return this.getEstado().finalizarEstacionamiento(patente, this);
+		return this.estado.finalizarEstacionamiento(patente, this);
 	}
 	
 	protected Notificacion finalizarEstacionamientoEstandoAbierto(String patente) {

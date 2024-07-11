@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import ar.edu.unq.poo2.tpfinal.Notificacion.Notificacion;
+import ar.edu.unq.poo2.tpfinal.Sem.SEM;
 import ar.edu.unq.poo2.tpfinal.ZonaDeEstacionamiento.ZonaDeEstacionamiento;
 
 import static org.mockito.Mockito.*;
@@ -50,5 +52,18 @@ public class RegistroDeEstacionamientoPuntualTest {
 
 		// Verify
 		assertFalse(regPuntual.getVigencia());
+	}
+	
+	@Test
+	public void testNotificarFinalizacionPara() {
+		// Setup
+		RegistroDeEstacionamientoPuntual regPuntual = new RegistroDeEstacionamientoPuntual(patentePuntual, horasEstacionamiento, unaFechaYHora, zonaA);
+		SEM unSem = mock(SEM.class);
+		
+		// Exercise
+		Notificacion notificacion = regPuntual.notificarFinalizacionPara(unSem);
+
+		// Verify
+		assertEquals(notificacion, null);
 	}
 }

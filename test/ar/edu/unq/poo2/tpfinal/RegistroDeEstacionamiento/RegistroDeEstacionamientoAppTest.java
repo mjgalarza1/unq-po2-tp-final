@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import ar.edu.unq.poo2.tpfinal.Sem.SEM;
 import ar.edu.unq.poo2.tpfinal.ZonaDeEstacionamiento.ZonaDeEstacionamiento;
 
 import static org.mockito.Mockito.*;
@@ -50,5 +51,31 @@ public class RegistroDeEstacionamientoAppTest {
 
 		// Verify
 		assertFalse(regApp.getVigencia());
+	}
+	
+	@Test
+	public void testSerCobradoSiCorrespondePor() {
+		// Setup
+		RegistroDeEstacionamientoApp regApp = new RegistroDeEstacionamientoApp(patenteApp, numCel, unaFechaYHora, zonaA);
+		SEM unSem = mock(SEM.class);
+		
+		// Exercise
+		regApp.serCobradoSiCorrespondePor(unSem);
+
+		// Verify
+		verify(unSem, times(1)).cobrarleA(regApp);
+	}
+	
+	@Test
+	public void testNotificarFinalizacionPara() {
+		// Setup
+		RegistroDeEstacionamientoApp regApp = new RegistroDeEstacionamientoApp(patenteApp, numCel, unaFechaYHora, zonaA);
+		SEM unSem = mock(SEM.class);
+		
+		// Exercise
+		regApp.notificarFinalizacionPara(unSem);
+
+		// Verify
+		verify(unSem, times(1)).notificacionDeFinalizacionPorAppPara(regApp);
 	}
 }
