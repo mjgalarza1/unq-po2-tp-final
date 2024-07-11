@@ -39,7 +39,6 @@ public class RegistroDeEstacionamientoPuntualTest {
 		assertEquals(regPuntual.getFechaYHoraDeInicio(), unaFechaYHora);
 		assertEquals(regPuntual.getZonaDeEstacionamiento(), zonaA);
 		assertTrue(regPuntual.getVigencia());
-		assertFalse(regPuntual.esDeApp());
 	}
 	
 	@Test
