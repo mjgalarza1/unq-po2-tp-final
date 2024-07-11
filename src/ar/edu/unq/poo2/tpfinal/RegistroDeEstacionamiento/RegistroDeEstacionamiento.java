@@ -7,10 +7,10 @@ import ar.edu.unq.poo2.tpfinal.ZonaDeEstacionamiento.*;
 
 public abstract class RegistroDeEstacionamiento {
 	
-	String patente;
-	LocalDateTime fechaYHoraDeInicio;
-	ZonaDeEstacionamiento zonaDeEstacionamiento;
-	boolean vigencia;
+	protected String patente;
+	protected LocalDateTime fechaYHoraDeInicio;
+	protected ZonaDeEstacionamiento zonaDeEstacionamiento;
+	protected boolean vigencia;
 	
 	public String getPatente() {
 		return this.patente;

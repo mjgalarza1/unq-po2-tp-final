@@ -9,9 +9,9 @@ import ar.edu.unq.poo2.tpfinal.RegistroDeEstacionamiento.*;
 
 public class ZonaDeEstacionamiento {
 	
-	List<PuntoDeVenta> puntosDeVenta;
-	String nombre;
-	Inspector inspector;
+	private List<PuntoDeVenta> puntosDeVenta;
+	private String nombre;
+	private Inspector inspector;
 	
 	public ZonaDeEstacionamiento(List<PuntoDeVenta> puntos,Inspector inspector,String nombre) {
 		this.puntosDeVenta = puntos;

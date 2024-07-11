@@ -9,18 +9,23 @@ import org.junit.jupiter.api.Test;
 
 public class InfraccionTest {
 	
-	Infraccion infraccion;
-	
 	ZonaDeEstacionamiento zonaA = mock(ZonaDeEstacionamiento.class);
 	Inspector inspector = mock(Inspector.class);
 	
 	String patente = "AAA000";
-	
-	Infraccion infraccionCompleta = new Infraccion(LocalTime.now(),zonaA,inspector,"AAA000");
+	LocalTime unaFechaYHora = LocalTime.now();
+	Infraccion infraccionCompleta = new Infraccion(unaFechaYHora,zonaA,inspector,"AAA000");
 	
 	@Test
 	public void testearPatenteEnInfraccion() {
-		assertEquals(infraccion.patente,patente);
+		assertEquals(infraccionCompleta.getPatente(),patente);
+	}
+	
+	@Test
+	public void testGettersDeInfraccion() {
+		assertEquals(infraccionCompleta.getFechaYHora(),unaFechaYHora);
+		assertEquals(infraccionCompleta.getInspector(),inspector);
+		assertEquals(infraccionCompleta.getZonaDeEstacionamiento(),zonaA);
 	}
 
 }

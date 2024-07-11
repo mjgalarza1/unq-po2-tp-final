@@ -15,7 +15,7 @@ public class InspectorTest {
 		
 		String nombre = "Carlos";
 		
-		assertEquals(inspector.nombre,nombre);
+		assertEquals(inspector.getNombre(),nombre);
 	}
 	
 }

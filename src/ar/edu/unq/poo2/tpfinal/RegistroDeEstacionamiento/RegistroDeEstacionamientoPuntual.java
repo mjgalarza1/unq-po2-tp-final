@@ -6,9 +6,9 @@ import ar.edu.unq.poo2.tpfinal.ZonaDeEstacionamiento.*;
 
 public class RegistroDeEstacionamientoPuntual extends RegistroDeEstacionamiento{
 	
-	public int horasEstacionamiento;
+	private int horasEstacionamiento;
 	
-	public LocalDateTime fechaYHoraDeInicio;
+	private LocalDateTime fechaYHoraDeInicio;
 	
 	public RegistroDeEstacionamientoPuntual(String patente, int horasEstacionamiento, LocalDateTime fechaYHoraDeInicio, ZonaDeEstacionamiento zonaDeEstacionamiento) {
 		this.patente = patente;
