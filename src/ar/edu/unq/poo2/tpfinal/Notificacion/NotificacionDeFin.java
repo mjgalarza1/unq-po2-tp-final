@@ -1,8 +1,7 @@
 package ar.edu.unq.poo2.tpfinal.Notificacion;
-
 import java.time.LocalTime;
 
-public class NotificacionDeFin implements Notificacion {
+public class NotificacionDeFin extends Notificacion {
 
 	private LocalTime horaInicio;
 	private LocalTime horaFin;

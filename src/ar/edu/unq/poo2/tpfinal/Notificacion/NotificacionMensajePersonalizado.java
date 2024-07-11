@@ -1,6 +1,6 @@
 package ar.edu.unq.poo2.tpfinal.Notificacion;
 
-public class NotificacionMensajePersonalizado implements Notificacion {
+public class NotificacionMensajePersonalizado extends Notificacion {
 
 	String mensajeDeNotificacion;
 	
@@ -8,7 +8,6 @@ public class NotificacionMensajePersonalizado implements Notificacion {
 		this.mensajeDeNotificacion = mensajeDeNotificacion;
 	}
 	
-	@Override
 	public String getMensaje() {
 		return mensajeDeNotificacion;
 	}

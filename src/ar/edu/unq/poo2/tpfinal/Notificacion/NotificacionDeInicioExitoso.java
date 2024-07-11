@@ -2,7 +2,7 @@ package ar.edu.unq.poo2.tpfinal.Notificacion;
 
 import java.time.LocalTime;
 
-public class NotificacionDeInicioExitoso implements Notificacion {
+public class NotificacionDeInicioExitoso extends Notificacion {
 
 	private LocalTime horaInicio;
 	private LocalTime horaMaxima;
@@ -18,6 +18,11 @@ public class NotificacionDeInicioExitoso implements Notificacion {
 	
 	public LocalTime getHoraMaxima() {
 		return horaMaxima;
+	}
+	
+	@Override
+	public boolean esNotificacionDeInicioExitoso() {
+		return true;
 	}
 	
 	@Override

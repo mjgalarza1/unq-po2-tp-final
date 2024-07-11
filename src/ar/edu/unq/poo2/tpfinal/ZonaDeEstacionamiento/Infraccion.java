@@ -4,10 +4,10 @@ import java.time.LocalTime;
 
 public class Infraccion {
 	
-	LocalTime fechaYHora;
-	String patente;
-	Inspector inspector;
-	ZonaDeEstacionamiento zonaDeEstacionamiento;
+	private LocalTime fechaYHora;
+	private String patente;
+	private Inspector inspector;
+	private ZonaDeEstacionamiento zonaDeEstacionamiento;
 	
 	public Infraccion(LocalTime fechaYHora, ZonaDeEstacionamiento zonaDeEstacionamiento, Inspector inspector, String patente) {
 		this.fechaYHora = fechaYHora;
@@ -26,6 +26,10 @@ public class Infraccion {
 	
 	public Inspector getInspector() {
 		return this.inspector;
+	}
+	
+	public String getPatente() {
+		return this.patente;
 	}
 
 }

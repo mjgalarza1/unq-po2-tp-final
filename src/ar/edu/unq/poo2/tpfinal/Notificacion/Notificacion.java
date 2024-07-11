@@ -1,6 +1,10 @@
 package ar.edu.unq.poo2.tpfinal.Notificacion;
 
-public interface Notificacion {
+public abstract class Notificacion {
 
-	public String getMensaje();
+	public abstract String getMensaje();
+
+	public boolean esNotificacionDeInicioExitoso() {
+		return false;
+	}
 }

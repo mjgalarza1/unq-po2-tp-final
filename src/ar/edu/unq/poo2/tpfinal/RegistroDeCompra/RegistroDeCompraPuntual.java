@@ -1,6 +1,6 @@
 package ar.edu.unq.poo2.tpfinal.RegistroDeCompra;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 import ar.edu.unq.poo2.tpfinal.PuntoDeVenta.*;
 
@@ -8,7 +8,7 @@ public class RegistroDeCompraPuntual extends RegistroDeCompra{
 	
 	int cantidadDeHorasCompradas;
 	
-	public RegistroDeCompraPuntual(int numeroDeControl,int horasEstacionamiento, LocalTime fechaYHoraDeInicio, PuntoDeVenta puntoDeVenta) {
+	public RegistroDeCompraPuntual(int numeroDeControl,int horasEstacionamiento, LocalDateTime fechaYHoraDeInicio, PuntoDeVenta puntoDeVenta) {
 		this.numeroDeControl = numeroDeControl;
 		this.cantidadDeHorasCompradas = horasEstacionamiento;
 		this.fechaYHora = fechaYHoraDeInicio;

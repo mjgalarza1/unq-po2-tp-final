@@ -2,16 +2,23 @@ package ar.edu.unq.poo2.tpfinal.RegistroDeEstacionamiento;
 
 import java.time.LocalDateTime;
 
+import ar.edu.unq.poo2.tpfinal.Notificacion.Notificacion;
+import ar.edu.unq.poo2.tpfinal.Sem.SEM;
 import ar.edu.unq.poo2.tpfinal.ZonaDeEstacionamiento.*;
 
 
 public abstract class RegistroDeEstacionamiento {
 	
-	String patente;
-	LocalDateTime fechaYHoraDeInicio;
-	ZonaDeEstacionamiento zonaDeEstacionamiento;
-	boolean vigencia;
+	protected String patente;
+	protected LocalDateTime fechaYHoraDeInicio;
+	protected ZonaDeEstacionamiento zonaDeEstacionamiento;
+	protected boolean vigencia;
 	
+	
+	protected RegistroDeEstacionamiento() {
+		this.vigencia = true;
+	}
+
 	public String getPatente() {
 		return this.patente;
 	}
@@ -35,5 +42,9 @@ public abstract class RegistroDeEstacionamiento {
 	public void setVigencia(boolean vigencia) {
 		this.vigencia = vigencia;
 	}
+
+	public abstract void serCobradoSiCorrespondePor(SEM unSem);
+
+	public abstract Notificacion notificarFinalizacionPara(SEM sem);
 
 }
