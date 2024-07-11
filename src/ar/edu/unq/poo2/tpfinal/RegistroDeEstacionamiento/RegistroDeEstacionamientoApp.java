@@ -14,11 +14,7 @@ public class RegistroDeEstacionamientoApp extends RegistroDeEstacionamiento {
 		return this.numeroDeCelular;
 	}
 	
-	@Override
-	public boolean esDeApp() {
-		return true;
-	}
-
+	
 	public RegistroDeEstacionamientoApp(String unaPatente, int unNumCel, LocalDateTime unaFechaYHoraDeInicio, ZonaDeEstacionamiento unaZonaDeEstacionamiento){
 		this.patente = unaPatente;
 		this.numeroDeCelular = unNumCel;
