@@ -1,5 +1,4 @@
 package ar.edu.unq.poo2.tpfinal.Sem;
-import static org.junit.jupiter.api.DynamicTest.stream;
 
 import java.time.Clock;
 import java.time.LocalTime;
