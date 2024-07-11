@@ -1,9 +1,13 @@
-# unq-po2-tp-final
+# TP FINAL: Sistema de Estacionamiento Medido
+### Alumnos:
 
-Alumnos:  
++ Hernán Moreyra
++ Matías Galarza
++ Jorge Terradillos
 
-  - Hernán Moreyra  
+-----
 
-  - Matías Galarza  
+### UML:
+*(Disponible también en PDF dentro del repo como [TP Final UML.pdf](https://github.com/hmoreyra/unq-po2-tp-final/blob/main/TP%20Final%20UML.pdf))*
 
-  - Jorge Terradillos  
+![UML del SEM.](https://github.com/hmoreyra/unq-po2-tp-final/blob/main/TP%20Final%20UML.png?raw=true)
