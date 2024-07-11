@@ -76,11 +76,9 @@ public class SEMTest {
 		when(unEstacionamientoApp.getNumeroDeCelular()).thenReturn(unNumCel);
 		when(unEstacionamientoApp.getPatente()).thenReturn("MAX000");
 		when(unEstacionamientoApp.getVigencia()).thenReturn(true);
-		when(unEstacionamientoApp.esDeApp()).thenReturn(true);
 		when(unEstacionamientoApp.getZonaDeEstacionamiento()).thenReturn(zonaA);
 		when(unEstacionamientoPuntual.getPatente()).thenReturn("MAX001");
 		when(unEstacionamientoPuntual.getVigencia()).thenReturn(true);
-		when(unEstacionamientoPuntual.esDeApp()).thenReturn(false);
 		when(unEstacionamientoPuntual.getZonaDeEstacionamiento()).thenReturn(zonaB);
 		
 		// DOC (reloj custom para testear)
@@ -342,7 +340,6 @@ public class SEMTest {
 		when(elMismoEstacionamientoApp.getNumeroDeCelular()).thenReturn(unNumCel);
 		when(elMismoEstacionamientoApp.getPatente()).thenReturn("MAX000");
 		when(elMismoEstacionamientoApp.getVigencia()).thenReturn(true);
-		when(elMismoEstacionamientoApp.esDeApp()).thenReturn(true);
 		
 		Notificacion unaNotificacion = sem24Horas.registrarEstacionamientoPorApp(unEstacionamientoApp);
 		
@@ -482,7 +479,6 @@ public class SEMTest {
 		RegistroDeEstacionamientoPuntual elMismoEstacionamientoPuntual = mock(RegistroDeEstacionamientoPuntual.class);
 		when(elMismoEstacionamientoPuntual.getPatente()).thenReturn("MAX001");
 		when(elMismoEstacionamientoPuntual.getVigencia()).thenReturn(true);
-		when(elMismoEstacionamientoPuntual.esDeApp()).thenReturn(false);
 		when(elMismoEstacionamientoPuntual.getZonaDeEstacionamiento()).thenReturn(zonaB);
 		String patente = unEstacionamientoPuntual.getPatente();
 		sem24Horas.registrarEstacionamientoPuntual(unEstacionamientoPuntual);
@@ -863,7 +859,6 @@ public class SEMTest {
 		when(elMismoEstacionamientoApp.getNumeroDeCelular()).thenReturn(unNumCel);
 		when(elMismoEstacionamientoApp.getPatente()).thenReturn("MAX000");
 		when(elMismoEstacionamientoApp.getVigencia()).thenReturn(true);
-		when(elMismoEstacionamientoApp.esDeApp()).thenReturn(true);
 
 		String mensajeDenegado = sem24Horas.mensajeDeNotificacionEstacionamientoYaVigente(elMismoEstacionamientoApp.getPatente());
 		
