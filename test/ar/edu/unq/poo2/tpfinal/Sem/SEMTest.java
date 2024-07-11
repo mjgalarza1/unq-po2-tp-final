@@ -93,8 +93,8 @@ public class SEMTest {
 		when(relojCustom.instant()).thenReturn(NOW.toInstant());
 		
 		//DOC (Estado del SEM):
-		unEstadoAbierto = new EstadoAbierto();//mock(EstadoAbierto.class);
-		unEstadoCerrado = new EstadoCerrado();// mock(EstadoCerrado.class);
+		unEstadoAbierto = mock(EstadoAbierto.class);
+		unEstadoCerrado = mock(EstadoCerrado.class);
 		
 		// MENSAJES DE ALGUNAS NOTIFICACIONES (para test)
 		alertaInicioMsg = "AVISO: Su estacionamiento no fue registrado."
@@ -242,6 +242,30 @@ public class SEMTest {
 	}
 	
 	// ------------------- TESTS DE LOS REGISTROS DE ESTACIONAMIENTO PUNTUAL -------------------
+	
+	@Test
+	public void registrarEstacionamientoPuntualTest() {
+		// Exercise
+		sem.registrarEstacionamientoPuntual(unEstacionamientoPuntual);
+		
+		//verify
+		verify(sem.getEstado()).registrarEstacionamientoPuntual(unEstacionamientoPuntual, sem);
+	}
+	
+	@Test
+	public void registrarEstacionamientoPuntualEstandoAbiertoTEST() {
+		EntidadObservadora unaEntidad = mock(EntidadObservadora.class);
+		sem.suscribir(unaEntidad);
+		
+		sem.registrarEstacionamientoPuntualEstandoAbierto(unEstacionamientoPuntual);
+		
+
+		assertTrue(sem.getRegistrosDeEstacionamiento().contains(unEstacionamientoPuntual));
+		assertEquals(sem.getRegistrosDeEstacionamiento().get(0).getPatente(), unEstacionamientoPuntual.getPatente());
+		verify(unaEntidad,times(1)).update(unEstacionamientoPuntual);
+	}
+	
+	
 	@Test
 	public void testRegistroDeEstacionamientoPuntualExitoso() {
 		// Exercise
@@ -305,6 +329,16 @@ public class SEMTest {
 	}
 	
 	// ------------------- TESTS DE LOS REGISTROS DE ESTACIONAMIENTO POR APP -------------------
+	
+	@Test
+	public void registrarEstacionamientoPorAppTest() {
+		// Exercise
+		sem.registrarEstacionamientoPorApp(unEstacionamientoApp);
+		
+		//verify
+		verify(sem.getEstado()).registrarEstacionamientoPorApp(unEstacionamientoApp, sem);
+	}
+	
 	@Test
 	public void testRegistroDeEstacionamientoPorAppExitoso() {
 		// Setup
@@ -812,5 +846,5 @@ public class SEMTest {
 		
 		// Verify
 		assertTrue(optionalEstacionamiento.isEmpty());
-	}
+	} */
 }

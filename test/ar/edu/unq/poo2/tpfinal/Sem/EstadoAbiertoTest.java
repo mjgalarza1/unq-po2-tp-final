@@ -1,87 +1,66 @@
 package ar.edu.unq.poo2.tpfinal.Sem;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.time.Clock;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import ar.edu.unq.poo2.tpfinal.Notificacion.Notificacion;
-import ar.edu.unq.poo2.tpfinal.RegistroDeEstacionamiento.RegistroDeEstacionamientoApp;
-import ar.edu.unq.poo2.tpfinal.RegistroDeEstacionamiento.RegistroDeEstacionamientoPuntual;
+import ar.edu.unq.poo2.tpfinal.RegistroDeEstacionamiento.*;
 
 class EstadoAbiertoTest {
 
 	private EstadoAbierto unEstadoAbierto;
-	private RegistroDeEstacionamientoApp unEstacionamientoApp;
 	private SEM unSem;
-	private Clock unReloj;
+	private RegistroDeEstacionamientoApp unEstacionamientoApp;
 	private RegistroDeEstacionamientoPuntual unEstacionamientoPuntual;
-	private LocalDate fechaCustom;
-	private LocalTime horarioCustom;
-
+	private String unaPatente;
+	
 	@BeforeEach
-	void setUp() throws Exception {
+	public void setUp() {
 		unEstadoAbierto = new EstadoAbierto();
+		unSem = mock(SEM.class);
 		unEstacionamientoApp = mock(RegistroDeEstacionamientoApp.class);
 		unEstacionamientoPuntual = mock(RegistroDeEstacionamientoPuntual.class);
-		unSem = mock(SEM.class);
-		unReloj = mock(Clock.class);
-		
-		
-		when(unEstacionamientoApp.getNumeroDeCelular()).thenReturn(unNumCel);
-		when(unEstacionamientoApp.getPatente()).thenReturn("MAX000");
-		when(unEstacionamientoApp.getVigencia()).thenReturn(true);
-		when(unEstacionamientoApp.esDeApp()).thenReturn(true);
-		when(unEstacionamientoApp.getZonaDeEstacionamiento()).thenReturn(zonaA);
-		when(unEstacionamientoPuntual.getPatente()).thenReturn("MAX001");
-		when(unEstacionamientoPuntual.getVigencia()).thenReturn(true);
-		when(unEstacionamientoPuntual.esDeApp()).thenReturn(false);
-		when(unEstacionamientoPuntual.getZonaDeEstacionamiento()).thenReturn(zonaB);
-		
-		// DOC (reloj custom para testear)
-		fechaCustom = LocalDate.now();
-		horarioCustom = LocalTime.of(15, 0);
-		ZonedDateTime NOW = ZonedDateTime.of(fechaCustom, horarioCustom, ZoneId.ofOffset("GMT", ZoneOffset.ofHours(-3)));
-		Clock relojCustom = mock(Clock.class);
-		
-		when(relojCustom.getZone()).thenReturn(NOW.getZone());
-		when(relojCustom.instant()).thenReturn(NOW.toInstant());
+		unaPatente = "abc123";
 	}
 	
 	@Test
 	void registrarEstacionamientoPuntualTEST() {
-		
+		// Exercise
 		unEstadoAbierto.registrarEstacionamientoPuntual(unEstacionamientoPuntual, unSem);
 		
-		fail("Not yet implemented");
+		// Verify
+		verify(unSem, times(1)).registrarEstacionamientoPuntualEstandoAbierto(unEstacionamientoPuntual);
 	}
 	
 	@Test
-	void registrarEstacionamientoPorAppTEST() {
+	void registrarEstacionamientoAppTEST() {
+		// Setup
+		Notificacion unaNotificacion = mock(Notificacion.class);
+		when(unSem.registrarEstacionamientoPorAppEstandoAbierto(unEstacionamientoApp)).thenReturn(unaNotificacion);
 		
-		unEstadoAbierto.finalizarEstacionamiento("abc 123", unSem);
+		// Exercise
+		Notificacion notificacionRecibida = unEstadoAbierto.registrarEstacionamientoPorApp(unEstacionamientoApp, unSem);
 		
-		fail("Not yet implemented");
+		// Verify
+		verify(unSem, times(1)).registrarEstacionamientoPorAppEstandoAbierto(unEstacionamientoApp);
+		assertEquals(notificacionRecibida, unaNotificacion);
 	}
 	
 	@Test
 	void finalizarEstacionamientoTEST() {
+		// Setup
+		Notificacion unaNotificacion = mock(Notificacion.class);
+		when(unSem.finalizarEstacionamientoEstandoAbierto(unaPatente)).thenReturn(unaNotificacion);
 		
-		unEstadoAbierto.finalizarEstacionamiento("abc 123", unSem);
+		// Exercise
+		Notificacion notificacionRecibida = unEstadoAbierto.finalizarEstacionamiento(unaPatente, unSem);
 		
-		fail("Not yet implemented");
+		// Verify
+		verify(unSem, times(1)).finalizarEstacionamientoEstandoAbierto(unaPatente);
+		assertEquals(notificacionRecibida, unaNotificacion);
 	}
 
 }

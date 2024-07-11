@@ -172,7 +172,11 @@ public class SEM {
 		}
 		return notificacion;
 	}
-	
+	 
+
+	public Notificacion finalizarEstacionamiento(String patente) {
+		return this.getEstado().finalizarEstacionamiento(patente, this);
+	}
 	
 	protected Notificacion finalizarEstacionamientoEstandoAbierto(String patente) {
 		// Busca si existe un estacionamiento vigente que tenga la patente dada,
@@ -240,11 +244,7 @@ public class SEM {
 		celular.incrementarCredito(montoACargar);
 	}
 	
-	public Notificacion finalizarEstacionamiento(String patente) {
-		return this.getEstado().finalizarEstacionamiento(patente, this);
-	}
-	
-	
+
 	public Notificacion notificacionDeFinalizacionPorAppPara(RegistroDeEstacionamientoApp unEstacionamiento) {
 		// Retorna la notificación de Finalización del estacionamiento por app dado. 
 		LocalTime horaInicio = unEstacionamiento.getFechaYHoraDeInicio().toLocalTime();
