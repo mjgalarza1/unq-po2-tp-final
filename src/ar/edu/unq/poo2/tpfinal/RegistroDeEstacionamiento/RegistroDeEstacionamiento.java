@@ -35,10 +35,6 @@ public abstract class RegistroDeEstacionamiento {
 		return this.zonaDeEstacionamiento;
 	}
 	
-	public boolean esDeApp() {
-		return false;
-	};
-	
 	public void setVigencia(boolean vigencia) {
 		this.vigencia = vigencia;
 	}
