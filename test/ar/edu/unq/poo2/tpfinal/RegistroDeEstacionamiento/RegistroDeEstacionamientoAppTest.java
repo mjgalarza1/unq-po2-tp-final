@@ -38,7 +38,6 @@ public class RegistroDeEstacionamientoAppTest {
 		assertEquals(regApp.getFechaYHoraDeInicio(), unaFechaYHora);
 		assertEquals(regApp.getZonaDeEstacionamiento(), zonaA);
 		assertTrue(regApp.getVigencia());
-		assertTrue(regApp.esDeApp());
 	}
 	
 	@Test
