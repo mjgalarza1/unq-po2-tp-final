@@ -769,18 +769,24 @@ public class SEMTest {
 	
 	@Test
 	public void testGetEstacionamientoDePatenteDePatenteQueSiEstaRegistrada() {
+		// Setup
+		sem24Horas.registrarEstacionamiento(unEstacionamientoPuntual);
+		
 		// Exercise
-		Optional<RegistroDeEstacionamiento> optionalEstacionamiento = sem.getEstacionamientoDePatente("MAX000");
+		Optional<RegistroDeEstacionamiento> optionalEstacionamiento = sem24Horas.getEstacionamientoDePatente("MAX001");
 		
 		// Verify
 		assertTrue(optionalEstacionamiento.isPresent());
-		assertEquals(unEstacionamientoApp, optionalEstacionamiento.get());
+		assertEquals(unEstacionamientoPuntual, optionalEstacionamiento.get());
 	}
 	
 	@Test
 	public void testGetEstacionamientoDePatenteQueNoEstaRegistrada() {
+		// Setup
+		sem24Horas.registrarEstacionamiento(unEstacionamientoPuntual);
+		
 		// Exercise
-		Optional<RegistroDeEstacionamiento> optionalEstacionamiento = sem.getEstacionamientoDePatente("MAX000");
+		Optional<RegistroDeEstacionamiento> optionalEstacionamiento = sem24Horas.getEstacionamientoDePatente("MAX050");
 		
 		// Verify
 		assertTrue(optionalEstacionamiento.isEmpty());
