@@ -93,8 +93,8 @@ public class SEMTest {
 		when(relojCustom.instant()).thenReturn(NOW.toInstant());
 		
 		//DOC (Estado del SEM):
-		unEstadoAbierto = mock(EstadoAbierto.class);
-		unEstadoCerrado = mock(EstadoCerrado.class);
+		unEstadoAbierto = new EstadoAbierto();//mock(EstadoAbierto.class);
+		unEstadoCerrado = new EstadoCerrado();// mock(EstadoCerrado.class);
 		
 		// MENSAJES DE ALGUNAS NOTIFICACIONES (para test)
 		alertaInicioMsg = "AVISO: Su estacionamiento no fue registrado."
@@ -240,7 +240,7 @@ public class SEMTest {
 		assertTrue(sem24Horas.elServicioEstaAbierto());
 		assertFalse(semCerrado.elServicioEstaAbierto());
 	}
-	/*
+	
 	// ------------------- TESTS DE LOS REGISTROS DE ESTACIONAMIENTO PUNTUAL -------------------
 	@Test
 	public void testRegistroDeEstacionamientoPuntualExitoso() {
@@ -648,7 +648,7 @@ public class SEMTest {
 		verify(unEstacionamientoPuntual, times(1)).setVigencia(false);
 		assertTrue(hayEstacionamientosVigentesOriginal);
 		assertFalse(hayEstacionamientosVigentesLuegoDeFinalizar);
-	}*/
+	}
 	
 	// ------------------- TESTS REGISTRO DE COMPRA -------------------
 	@Test

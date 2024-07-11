@@ -137,8 +137,66 @@ public class SEM {
 	}
 
 	public Notificacion registrarEstacionamientoPorApp(RegistroDeEstacionamientoApp unEstacionamiento) {
-		return this.getEstado().registrarEstacionamientoPorApp(unEstacionamiento, this, this.reloj);
+		return this.getEstado().registrarEstacionamientoPorApp(unEstacionamiento, this);
 	}
+	
+	//
+	
+	protected void registrarEstacionamientoPuntualEstandoAbierto(RegistroDeEstacionamientoPuntual unEstacionamiento) {
+		this.agregarZonaDeEstacionamiento(unEstacionamiento);
+		this.agregarARegistrosDeEstacionamiento(unEstacionamiento);
+		this.notificar(unEstacionamiento); // Notifica a las entidades observadoras que el estacionamiento fue registrado.
+	}
+	
+	
+	protected Notificacion registrarEstacionamientoPorAppEstandoAbierto(RegistroDeEstacionamientoApp unEstacionamiento) {
+		// Guarda el registro del estacionamiento en el sistema
+		// SOLAMENTE si el numero de celular del estacionamiento dado tiene saldo SUFICIENTE y
+		// si la patente del estacionamiento dado NO se encuentra ya vigente en el sistema,
+		// retornando la notificación correspondiente.
+		Notificacion notificacion;
+		int numeroDeCelular = unEstacionamiento.getNumeroDeCelular(); 
+		Optional<Celular> celular = this.getCelularDeNumero(numeroDeCelular);
+		LocalTime horaActual = LocalTime.now(reloj);
+				
+		if (celular.isEmpty()) {
+			notificacion = new NotificacionMensajePersonalizado(this.mensajeDeNotificacionNumeroNoRegistrado(numeroDeCelular));
+		} else if (celular.get().getCredito() <= 0) {
+			notificacion = new NotificacionMensajePersonalizado(this.mensajeDeNotificacionSaldoInsuficiente());
+		} else {
+			double saldoDelCliente = celular.get().getCredito();
+			this.agregarZonaDeEstacionamiento(unEstacionamiento);
+			this.agregarARegistrosDeEstacionamiento(unEstacionamiento);
+			this.notificar(unEstacionamiento); // Notifica a las entidades observadoras sobre el registro del estacionamiento.
+			notificacion = new NotificacionDeInicioExitoso(horaActual, this.getHoraMaximaPara(saldoDelCliente, horaActual));
+		}
+		return notificacion;
+	}
+	
+	
+	protected Notificacion finalizarEstacionamientoEstandoAbierto(String patente) {
+		// Busca si existe un estacionamiento vigente que tenga la patente dada,
+		// y si existe finalizarlo y retornar la notificacion debida.
+		// Si NO existe, retornar una notificacion avisando que no existe
+		// (O null para el caso de ser Puntual).
+		boolean hayEstacionamientoVigente = this.esEstacionamientoVigente(patente);
+		Notificacion notificacion;
+		if(hayEstacionamientoVigente) { // si es vigente se finaliza
+			Optional<RegistroDeEstacionamiento> estacionamiento = this.getEstacionamientoDePatente(patente);
+			RegistroDeEstacionamiento estacionamientoModificado = estacionamiento.get();
+			estacionamientoModificado.setVigencia(false);
+			this.notificar(estacionamientoModificado); // Notifica a las entidades observadoras sobre la finalizacion del estacionamiento.
+			this.cobrarleSiCorrespondeA(estacionamientoModificado);
+			notificacion = this.notificacionDeFinalizacionQueCorrespondaPara(estacionamientoModificado);
+		}
+		else { // si no hay estacionamiento vigente, no finaliza
+			notificacion = new NotificacionMensajePersonalizado(this.mensajeDeNotificacionEstacionamientoNoVigente(patente));
+		}
+		return notificacion;	
+	}
+	
+	//
+	
 	
 	protected void agregarZonaDeEstacionamiento(RegistroDeEstacionamiento unEstacionamiento) {
 		ZonaDeEstacionamiento zonaDeEstacionamiento = unEstacionamiento.getZonaDeEstacionamiento();

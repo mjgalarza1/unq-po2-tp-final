@@ -15,7 +15,7 @@ public class EstadoCerrado implements EstadoSEM {
 	}
 
 	@Override
-	public Notificacion registrarEstacionamientoPorApp(RegistroDeEstacionamientoApp unEstacionamiento, SEM sem, Clock reloj) {
+	public Notificacion registrarEstacionamientoPorApp(RegistroDeEstacionamientoApp unEstacionamiento, SEM sem) {
 		return new NotificacionMensajePersonalizado(sem.mensajeDeNotificacionServicioCerrado());
 	}
 
