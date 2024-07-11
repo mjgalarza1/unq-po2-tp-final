@@ -1,10 +1,10 @@
 package ar.edu.unq.poo2.tpfinal.Notificacion;
 
 public class AlertaDeFin extends Notificacion {
-
+	
+	@Override
 	public String getMensaje() {
-		// TODO Auto-generated method stub
-		return null;
+		return "AVISO: Su estacionamiento aún está vigente."
+				+"\nSi desea salir de la Zona de Estacionamiento, debe finalizar su estacionamiento.";
 	}
-
 }

@@ -1,10 +1,9 @@
 package ar.edu.unq.poo2.tpfinal.Notificacion;
 
 public class AlertaDeInicio extends Notificacion {
-
+	
 	public String getMensaje() {
-		// TODO Auto-generated method stub
-		return null;
+		return "AVISO: Su estacionamiento no fue registrado."
+				+"\nDebe registrar el estacionamiento.";
 	}
-
 }

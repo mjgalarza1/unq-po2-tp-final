@@ -7,5 +7,4 @@ public abstract class Notificacion {
 	public boolean esNotificacionDeInicioExitoso() {
 		return false;
 	}
-
 }

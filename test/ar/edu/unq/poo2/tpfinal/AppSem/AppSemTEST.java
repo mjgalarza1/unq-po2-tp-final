@@ -10,7 +10,7 @@ import org.mockito.ArgumentCaptor;
 import ar.edu.unq.poo2.tpfinal.EstadoDeMovimiento.*;
 import ar.edu.unq.poo2.tpfinal.Modo.*;
 import ar.edu.unq.poo2.tpfinal.Notificacion.*;
-import ar.edu.unq.poo2.tpfinal.Registro.RegistroDeEstacionamiento.RegistroDeEstacionamientoApp;
+import ar.edu.unq.poo2.tpfinal.RegistroDeEstacionamiento.RegistroDeEstacionamientoApp;
 import ar.edu.unq.poo2.tpfinal.Sem.SEM;
 import ar.edu.unq.poo2.tpfinal.ZonaDeEstacionamiento.ZonaDeEstacionamiento;
 
@@ -100,10 +100,10 @@ class AppSemTEST {
 	
 	@Test
 	void consultarSaldoTEST() {
-		when(unSem.getSaldoDe(1166667777)).thenReturn("Su saldo es 0 pesos");
-		String saldo = unaApp.consultarSaldo();
+		when(unSem.getSaldoDe(1166667777)).thenReturn(4d);
+		double saldo = unaApp.consultarSaldo();
 		verify(unSem, times(1)).getSaldoDe(1166667777);
-		assertEquals("Su saldo es 0 pesos", saldo);
+		assertEquals(4d, saldo);
 	}
 	
 	@Test

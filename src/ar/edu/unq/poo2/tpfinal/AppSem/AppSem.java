@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import ar.edu.unq.poo2.tpfinal.EstadoDeMovimiento.EstadoDeMovimiento;
 import ar.edu.unq.poo2.tpfinal.Modo.Modo;
 import ar.edu.unq.poo2.tpfinal.Notificacion.Notificacion;
-import ar.edu.unq.poo2.tpfinal.Registro.RegistroDeEstacionamiento.RegistroDeEstacionamientoApp;
+import ar.edu.unq.poo2.tpfinal.RegistroDeEstacionamiento.RegistroDeEstacionamientoApp;
 import ar.edu.unq.poo2.tpfinal.Sem.SEM;
 import ar.edu.unq.poo2.tpfinal.ZonaDeEstacionamiento.ZonaDeEstacionamiento;
 
@@ -33,7 +33,7 @@ public class AppSem {
 		this.deteccionMovActiva = deteccionMovActiva;
 	}
 
-	public String consultarSaldo() {
+	public double consultarSaldo() {
 		return this.getSem().getSaldoDe(this.getNumCel());
 	}
 

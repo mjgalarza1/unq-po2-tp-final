@@ -1,4 +1,4 @@
-package ar.edu.unq.poo2.tpfinal.Registro.RegistroDeEstacionamiento;
+package ar.edu.unq.poo2.tpfinal.RegistroDeEstacionamiento;
 
 import java.time.LocalDateTime;
 
