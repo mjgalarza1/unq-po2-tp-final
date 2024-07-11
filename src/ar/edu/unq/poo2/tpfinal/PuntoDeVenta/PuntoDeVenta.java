@@ -41,7 +41,7 @@ public class PuntoDeVenta {
 	
 	public void registrarVehiculo(RegistroDeEstacionamientoPuntual registro) {
 						
-		this.sem.registrarEstacionamiento(registro);
+		this.sem.registrarEstacionamientoPuntual(registro);
 	
 		RegistroDeCompraPuntual registroCompra = new RegistroDeCompraPuntual(this.generarNumeroDeRegistro(), registro.getHorasEstacionamiento(), LocalDateTime.now(), this);
 		

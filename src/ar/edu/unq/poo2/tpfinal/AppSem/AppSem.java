@@ -83,7 +83,7 @@ public class AppSem {
 
 	public Notificacion registrarVehiculo(ZonaDeEstacionamiento unaZona) {
 		RegistroDeEstacionamientoApp miEstacionamiento = new RegistroDeEstacionamientoApp(this.getPatente(), this.getNumCel(), LocalDateTime.now(), unaZona);
-		Notificacion unaNotificacion = this.getSem().registrarEstacionamiento(miEstacionamiento);
+		Notificacion unaNotificacion = this.getSem().registrarEstacionamientoPorApp(miEstacionamiento);
 		this.notificar(unaNotificacion);
 		return unaNotificacion;
 	}

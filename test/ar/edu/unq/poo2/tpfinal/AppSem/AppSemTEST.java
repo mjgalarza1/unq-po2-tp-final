@@ -119,14 +119,14 @@ class AppSemTEST {
 		ZonaDeEstacionamiento zonaA = mock(ZonaDeEstacionamiento.class);
         Notificacion unaNotificacion = mock(Notificacion.class);
         ArgumentCaptor<RegistroDeEstacionamientoApp> registroCaptor = ArgumentCaptor.forClass(RegistroDeEstacionamientoApp.class);
-		when(unSem.registrarEstacionamiento(registroCaptor.capture())).thenReturn(unaNotificacion);
+		when(unSem.registrarEstacionamientoPorApp(registroCaptor.capture())).thenReturn(unaNotificacion);
        
 		// exercise
 		Notificacion otraNotificacion = unaApp.registrarVehiculo(zonaA);
 		
 		// verify
 		assertEquals(unaNotificacion, otraNotificacion);
-		verify(unSem, times(1)).registrarEstacionamiento(registroCaptor.capture());
+		verify(unSem, times(1)).registrarEstacionamientoPorApp(registroCaptor.capture());
 		verify(unNotificable, times(1)).notificar(unaNotificacion);
 	}
 	
@@ -181,14 +181,14 @@ class AppSemTEST {
 		Notificacion unaNotificacion = mock(Notificacion.class); // dummy
 		Notificacion unaNotificacionExtra = mock(Notificacion.class); // dummy
 		ArgumentCaptor<RegistroDeEstacionamientoApp> registroCaptor = ArgumentCaptor.forClass(RegistroDeEstacionamientoApp.class);
-		when(unSem.registrarEstacionamiento(registroCaptor.capture())).thenReturn(unaNotificacion);
+		when(unSem.registrarEstacionamientoPorApp(registroCaptor.capture())).thenReturn(unaNotificacion);
 		when(unaNotificacion.esNotificacionDeInicioExitoso()).thenReturn(false);
 		       
 		// exercise
 		unaApp.registrarVehiculoConNotificacionExtra(unaNotificacionExtra);
 				
 		// verify
-		verify(unSem, times(1)).registrarEstacionamiento(registroCaptor.capture());
+		verify(unSem, times(1)).registrarEstacionamientoPorApp(registroCaptor.capture());
 		verify(unaNotificacion, times(1)).esNotificacionDeInicioExitoso();
 		verify(unNotificable, never()).notificar(unaNotificacionExtra);
 	}
@@ -200,14 +200,14 @@ class AppSemTEST {
 		Notificacion unaNotificacion = mock(Notificacion.class); // dummy
 		Notificacion unaNotificacionExtra = mock(Notificacion.class); // dummy
 		ArgumentCaptor<RegistroDeEstacionamientoApp> registroCaptor = ArgumentCaptor.forClass(RegistroDeEstacionamientoApp.class);
-		when(unSem.registrarEstacionamiento(registroCaptor.capture())).thenReturn(unaNotificacion);
+		when(unSem.registrarEstacionamientoPorApp(registroCaptor.capture())).thenReturn(unaNotificacion);
 		when(unaNotificacion.esNotificacionDeInicioExitoso()).thenReturn(true);
 		       
 		// exercise
 		unaApp.registrarVehiculoConNotificacionExtra(unaNotificacionExtra);
 				
 		// verify
-		verify(unSem, times(1)).registrarEstacionamiento(registroCaptor.capture());
+		verify(unSem, times(1)).registrarEstacionamientoPorApp(registroCaptor.capture());
 		verify(unaNotificacion, times(1)).esNotificacionDeInicioExitoso();
 		verify(unNotificable, times(1)).notificar(unaNotificacionExtra);
 	}

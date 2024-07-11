@@ -2,6 +2,8 @@ package ar.edu.unq.poo2.tpfinal.RegistroDeEstacionamiento;
 
 import java.time.LocalDateTime;
 
+import ar.edu.unq.poo2.tpfinal.Notificacion.Notificacion;
+import ar.edu.unq.poo2.tpfinal.Sem.SEM;
 import ar.edu.unq.poo2.tpfinal.ZonaDeEstacionamiento.*;
 
 public class RegistroDeEstacionamientoPuntual extends RegistroDeEstacionamiento{
@@ -17,6 +19,16 @@ public class RegistroDeEstacionamientoPuntual extends RegistroDeEstacionamiento{
 	
 	public int getHorasEstacionamiento() {
 		return this.horasEstacionamiento;
+	}
+
+	@Override
+	public void serCobradoSiCorrespondePor(SEM unSem) {
+		
+	}
+
+	@Override
+	public Notificacion notificarFinalizacionPara(SEM sem) {
+		return null;
 	}
 	
 		

@@ -31,6 +31,7 @@ public class SEM {
 	private List<Infraccion> infracciones;
 	private Set<EntidadObservadora> entidadesObservadoras;
 	private Clock reloj = Clock.system(ZoneId.systemDefault());
+	private EstadoSEM estado;
 	
 	// CONSTRUCTOR por DEFECTO (el SEM requiere de al menos una zona)
 	public SEM(Set<ZonaDeEstacionamiento> zonasDeEstacionamiento) {
@@ -44,6 +45,7 @@ public class SEM {
 		this.registrosDeEstacionamiento = new ArrayList<RegistroDeEstacionamiento>();
 		this.infracciones = new ArrayList<Infraccion>();
 		this.entidadesObservadoras = new HashSet<EntidadObservadora>();
+		this.estado = new EstadoAbierto();
 	}
 	
 	// CONSTRUCTOR para setear los HORARIOS de apertura y cierre además del PRECIO
@@ -58,10 +60,11 @@ public class SEM {
 		this.registrosDeEstacionamiento = new ArrayList<RegistroDeEstacionamiento>();
 		this.infracciones = new ArrayList<Infraccion>();
 		this.entidadesObservadoras = new HashSet<EntidadObservadora>();
+		this.estado = new EstadoAbierto();
 	}
 		
 	// CONSTRUCTOR para setear los HORARIOS de apertura y cierre, el PRECIO, y un RELOJ para testear.
-	public SEM(LocalTime horaApertura, LocalTime horaCierre, double precioPorHora, Set<ZonaDeEstacionamiento> zonasDeEstacionamiento, Clock reloj) {
+	protected SEM(LocalTime horaApertura, LocalTime horaCierre, double precioPorHora, Set<ZonaDeEstacionamiento> zonasDeEstacionamiento, Clock reloj) {
 		super();
 		this.horaApertura = horaApertura;
 		this.horaCierre = horaCierre;
@@ -73,102 +76,71 @@ public class SEM {
 		this.infracciones = new ArrayList<Infraccion>();
 		this.entidadesObservadoras = new HashSet<EntidadObservadora>();
 		this.reloj = reloj;
+		this.estado = new EstadoAbierto();
 	}
 	
 	
 	
 	// GETTERS
 	public LocalTime getHoraApertura() {
-		return horaApertura;
+		return this.horaApertura;
 	}
 	
 	public LocalTime getHoraCierre() {
-		return horaCierre;
+		return this.horaCierre;
 	}
 	
 	public double getPrecioPorHora() {
-		return precioPorHora;
+		return this.precioPorHora;
 	}
 	
 	public Set<Celular> getCelulares() {
-		return celulares;
+		return this.celulares;
 	}
 	
 	public Set<ZonaDeEstacionamiento> getZonasDeEstacionamiento() {
-		return zonasDeEstacionamiento;
+		return this.zonasDeEstacionamiento;
 	}
 	
 	public List<RegistroDeEstacionamiento> getRegistrosDeEstacionamiento() {
-		return registrosDeEstacionamiento;
+		return this.registrosDeEstacionamiento;
 	}
 	
 	public List<RegistroDeCompra> getRegistrosDeCompra() {
-		return registrosDeCompra;
+		return this.registrosDeCompra;
 	}
 	
 	public List<Infraccion> getInfracciones() {
-		return infracciones;
+		return this.infracciones;
 	}
 	
 	public Set<EntidadObservadora> getEntidadesObservadoras() {
-		return entidadesObservadoras;
+		return this.entidadesObservadoras;
+	}
+	
+	protected EstadoSEM getEstado() {
+		return this.estado;
+	}
+	
+	// SETTERS
+	
+	public void setEstado(EstadoSEM unEstado) {
+		this.estado = unEstado;
 	}
 	
 	// MÉTODOS
-	public Notificacion registrarEstacionamiento(RegistroDeEstacionamiento unEstacionamiento) {
-		// Delega el problema a los casos concretos (si es por app o si es puntual).
-		String patente = unEstacionamiento.getPatente();
-		boolean yaHayUnEstacionamientoVigente = esEstacionamientoVigente(patente);
-		Notificacion notificacion;
-		
-		if (!elServicioEstaAbierto()) {
-			notificacion = new NotificacionMensajePersonalizado(this.mensajeDeNotificacionServicioCerrado());
-		} else if (yaHayUnEstacionamientoVigente) {
-			notificacion = new NotificacionMensajePersonalizado(this.mensajeDeNotificacionEstacionamientoYaVigente(patente));
-		} else if (unEstacionamiento.esDeApp()) {
-			RegistroDeEstacionamientoApp unEstacionamientoApp = (RegistroDeEstacionamientoApp) unEstacionamiento; 
-			notificacion = registrarEstacionamientoPorApp(unEstacionamientoApp);
-		} else {
-			RegistroDeEstacionamientoPuntual unEstacionamientoPuntual = (RegistroDeEstacionamientoPuntual) unEstacionamiento;
-			notificacion = registrarEstacionamientoPuntual(unEstacionamientoPuntual);
-		}
-		return notificacion;
-	}
 	
-	private Notificacion registrarEstacionamientoPuntual(RegistroDeEstacionamientoPuntual unEstacionamiento) {
+	public void registrarEstacionamientoPuntual(RegistroDeEstacionamientoPuntual unEstacionamiento) {
 		// Retorna una notificación, a pesar de que el Punto de Venta no hará nada con él.
 		// Los registros de estacionamiento puntuales retornan notificaciones vacías (es decir, null).
-		agregarZonaDeEstacionamiento(unEstacionamiento);
-		registrosDeEstacionamiento.add(unEstacionamiento);
-		notificar(unEstacionamiento); // Notifica a las entidades observadoras que el estacionamiento fue registrado.
-		return null;
+		this.getEstado().registrarEstacionamientoPuntual(unEstacionamiento, this);
+	}
+
+	public Notificacion registrarEstacionamientoPorApp(RegistroDeEstacionamientoApp unEstacionamiento) {
+		return this.getEstado().registrarEstacionamientoPorApp(unEstacionamiento, this, this.reloj);
 	}
 	
-	private Notificacion registrarEstacionamientoPorApp(RegistroDeEstacionamientoApp unEstacionamiento) {
-		// Guarda el registro del estacionamiento en el sistema
-		// SOLAMENTE si el numero de celular del estacionamiento dado tiene saldo SUFICIENTE y
-		// si la patente del estacionamiento dado NO se encuentra ya vigente en el sistema,
-		// retornando la notificación correspondiente.
-		Notificacion notificacion;
-		int numeroDeCelular = unEstacionamiento.getNumeroDeCelular(); 
-		Optional<Celular> celular = this.getCelularDeNumero(numeroDeCelular);
-		LocalTime horaActual = LocalTime.now(reloj);
-		
-		if (celular.isEmpty()) {
-			notificacion = new NotificacionMensajePersonalizado(this.mensajeDeNotificacionNumeroNoRegistrado(numeroDeCelular));
-		} else if (celular.get().getCredito() <= 0) {
-			notificacion = new NotificacionMensajePersonalizado(this.mensajeDeNotificacionSaldoInsuficiente());
-		} else {
-			double saldoDelCliente = celular.get().getCredito();
-			agregarZonaDeEstacionamiento(unEstacionamiento);
-			registrosDeEstacionamiento.add(unEstacionamiento);
-			notificar(unEstacionamiento); // Notifica a las entidades observadoras sobre el registro del estacionamiento.
-			notificacion = new NotificacionDeInicioExitoso(horaActual, this.getHoraMaximaPara(saldoDelCliente, horaActual));
-		}
-		return notificacion;
-	}
-	
-	private void agregarZonaDeEstacionamiento(RegistroDeEstacionamiento unEstacionamiento) {
+	protected void agregarZonaDeEstacionamiento(RegistroDeEstacionamiento unEstacionamiento) {
 		ZonaDeEstacionamiento zonaDeEstacionamiento = unEstacionamiento.getZonaDeEstacionamiento();
 		zonasDeEstacionamiento.add(zonaDeEstacionamiento);
 	}
@@ -197,7 +169,7 @@ public class SEM {
 		return precioACobrar;
 	}
 	
-	private void cobrarleA(RegistroDeEstacionamientoApp unEstacionamiento) {
+	public void cobrarleA(RegistroDeEstacionamientoApp unEstacionamiento) {
 		int numeroDeCelular = unEstacionamiento.getNumeroDeCelular();
 		Celular celular = getCelularDeNumero(numeroDeCelular).get();
 		double montoACobrar = this.precioACobrarPara(unEstacionamiento); 
@@ -211,35 +183,11 @@ public class SEM {
 	}
 	
 	public Notificacion finalizarEstacionamiento(String patente) {
-		// Busca si existe un estacionamiento vigente que tenga la patente dada,
-		// y si existe finalizarlo y retornar la notificacion debida.
-		// Si NO existe, retornar una notificacion avisando que no existe
-		// (O una notificacion null para el caso de ser Puntual).
-		
-		boolean hayUnEstacionamientoVigente = esEstacionamientoVigente(patente);
-		Notificacion notificacion = null;
-		Optional<RegistroDeEstacionamiento> estacionamiento = registrosDeEstacionamiento.stream()
-				.filter(r -> r.getPatente().equals(patente) && r.getVigencia())
-				.findFirst();
-		
-		if (!elServicioEstaAbierto()) {
-			notificacion = new NotificacionMensajePersonalizado(this.mensajeDeNotificacionServicioCerrado());
-		} else if (!hayUnEstacionamientoVigente) {
-			notificacion = new NotificacionMensajePersonalizado(this.mensajeDeNotificacionEstacionamientoNoVigente(patente));
-		} else {
-			RegistroDeEstacionamiento estacionamientoModificado = estacionamiento.get();
-			estacionamientoModificado.setVigencia(false);
-			notificar(estacionamientoModificado); // Notifica a las entidades observadoras sobre la finalizacion del estacionamiento.
-			if (estacionamientoModificado.esDeApp()) {
-				RegistroDeEstacionamientoApp estacionamientoApp = (RegistroDeEstacionamientoApp) estacionamientoModificado;
-				cobrarleA(estacionamientoApp);
-				notificacion = this.notificacionDeFinalizacionPorAppPara(estacionamientoApp);
-			}
-		}
-		return notificacion;
+		return this.getEstado().finalizarEstacionamiento(patente, this);
 	}
 	
-	private Notificacion notificacionDeFinalizacionPorAppPara(RegistroDeEstacionamientoApp unEstacionamiento) {
+	
+	public Notificacion notificacionDeFinalizacionPorAppPara(RegistroDeEstacionamientoApp unEstacionamiento) {
 		// Retorna la notificación de Finalización del estacionamiento por app dado. 
 		LocalTime horaInicio = unEstacionamiento.getFechaYHoraDeInicio().toLocalTime();
 		LocalTime horaFin = LocalTime.now(reloj);
@@ -330,5 +278,17 @@ public class SEM {
 	
 	protected String mensajeDeNotificacionSaldoInsuficiente() {
 		return "Saldo insuficiente. Estacionamiento no permitido.";
+	}
+
+	protected void agregarARegistrosDeEstacionamiento(RegistroDeEstacionamiento unEstacionamiento) {
+		this.registrosDeEstacionamiento.add(unEstacionamiento);
+	}
+
+	protected void cobrarleSiCorrespondeA(RegistroDeEstacionamiento unEstacionamiento) {
+		unEstacionamiento.serCobradoSiCorrespondePor(this);
+	}
+
+	public Notificacion notificacionDeFinalizacionQueCorrespondaPara(RegistroDeEstacionamiento unEstacionamiento) {
+		return unEstacionamiento.notificarFinalizacionPara(this);
 	}
 }

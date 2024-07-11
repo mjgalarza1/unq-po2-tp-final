@@ -68,7 +68,7 @@ class PuntoDeVentaTest {
 		unPuntoDeVenta.registrarVehiculo(unRegistroDeEstacionamientoPuntual);
 		
 		// Verify
-		verify(unSem).registrarEstacionamiento(unRegistroDeEstacionamientoPuntual);
+		verify(unSem).registrarEstacionamientoPuntual(unRegistroDeEstacionamientoPuntual);
 		verify(unSem).registrarCompra(registroCaptor.capture());
 	}
 }
