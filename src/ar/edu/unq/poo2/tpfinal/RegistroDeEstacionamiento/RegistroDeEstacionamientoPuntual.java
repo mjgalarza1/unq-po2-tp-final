@@ -8,8 +8,6 @@ public class RegistroDeEstacionamientoPuntual extends RegistroDeEstacionamiento{
 	
 	private int horasEstacionamiento;
 	
-	private LocalDateTime fechaYHoraDeInicio;
-	
 	public RegistroDeEstacionamientoPuntual(String patente, int horasEstacionamiento, LocalDateTime fechaYHoraDeInicio, ZonaDeEstacionamiento zonaDeEstacionamiento) {
 		this.patente = patente;
 		this.horasEstacionamiento = horasEstacionamiento;
