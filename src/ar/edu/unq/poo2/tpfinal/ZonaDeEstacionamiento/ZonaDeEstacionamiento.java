@@ -1,7 +1,7 @@
 package ar.edu.unq.poo2.tpfinal.ZonaDeEstacionamiento;
 
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import ar.edu.unq.poo2.tpfinal.PuntoDeVenta.PuntoDeVenta;
@@ -34,7 +34,7 @@ public class ZonaDeEstacionamiento {
 	
 	public void registrarVehiculo(String patente, int cantHoras, PuntoDeVenta unPuntoDeVenta) {
 		
-		RegistroDeEstacionamientoPuntual estacionamiento = new RegistroDeEstacionamientoPuntual(patente, cantHoras, LocalTime.now(), this);
+		RegistroDeEstacionamientoPuntual estacionamiento = new RegistroDeEstacionamientoPuntual(patente, cantHoras, LocalDateTime.now(), this);
 		
 		unPuntoDeVenta.registrarVehiculo(estacionamiento);
 	}
