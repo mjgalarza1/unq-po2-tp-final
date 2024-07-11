@@ -1,10 +1,9 @@
 package ar.edu.unq.poo2.tpfinal.PuntoDeVenta;
 
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 import ar.edu.unq.poo2.tpfinal.Sem.SEM;
-import ar.edu.unq.poo2.tpfinal.ZonaDeEstacionamiento.*;
 import ar.edu.unq.poo2.tpfinal.RegistroDeCompra.*;
 import ar.edu.unq.poo2.tpfinal.RegistroDeEstacionamiento.*;
 
@@ -32,7 +31,7 @@ public class PuntoDeVenta {
 		this.sem.cargarCredito(monto, numeroDeCelular);
 		
 				
-		RegistroDeRecarga registro = new RegistroDeRecarga(this.generarNumeroDeRegistro(), monto, numeroDeCelular, LocalTime.now(), this);
+		RegistroDeRecarga registro = new RegistroDeRecarga(this.generarNumeroDeRegistro(), monto, numeroDeCelular, LocalDateTime.now(), this);
 		
 		this.sem.registrarCompra(registro);
 	}
@@ -42,7 +41,7 @@ public class PuntoDeVenta {
 						
 		this.sem.registrarEstacionamiento(registro);
 	
-		RegistroDeCompraPuntual registroCompra = new RegistroDeCompraPuntual(this.generarNumeroDeRegistro(), registro.horasEstacionamiento, LocalTime.now(), this);
+		RegistroDeCompraPuntual registroCompra = new RegistroDeCompraPuntual(this.generarNumeroDeRegistro(), registro.horasEstacionamiento, LocalDateTime.now(), this);
 		
 		this.sem.registrarCompra(registroCompra);
 		

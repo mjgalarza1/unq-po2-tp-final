@@ -1,6 +1,6 @@
 package ar.edu.unq.poo2.tpfinal.RegistroDeCompra;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 import ar.edu.unq.poo2.tpfinal.PuntoDeVenta.PuntoDeVenta;
 
@@ -9,7 +9,7 @@ public abstract class RegistroDeCompra {
 	
 	int numeroDeControl;
 	
-	LocalTime fechaYHora;
+	LocalDateTime fechaYHora;
 	
 	PuntoDeVenta puntoDeVenta;
 	
@@ -17,7 +17,7 @@ public abstract class RegistroDeCompra {
 		return this.numeroDeControl;
 	}
 	
-	public LocalTime getFechaYHora() {
+	public LocalDateTime getFechaYHora() {
 		return this.fechaYHora;
 	}
 	
